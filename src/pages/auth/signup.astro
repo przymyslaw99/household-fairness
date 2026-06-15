@@ -1,0 +1,17 @@
+---
+import AuthCard from "@/components/auth/AuthCard.astro";
+import AuthFooterPrompt from "@/components/auth/AuthFooterPrompt.astro";
+import SignUpForm from "@/components/auth/SignUpForm";
+import Layout from "@/layouts/Layout.astro";
+
+const error = Astro.url.searchParams.get("error");
+---
+
+<Layout title="Sign up">
+  <AuthCard title="Sign up">
+    <SignUpForm serverError={error} client:load />
+    <Fragment slot="footer">
+      <AuthFooterPrompt prompt="Already have an account?" href="/auth/signin" linkText="Sign in" />
+    </Fragment>
+  </AuthCard>
+</Layout>

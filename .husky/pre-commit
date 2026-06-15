@@ -1,0 +1,3 @@
+npm run sync:ai-rules
+git add AGENTS.md CLAUDE.md
+npx lint-staged

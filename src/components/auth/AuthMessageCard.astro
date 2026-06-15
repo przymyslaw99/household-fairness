@@ -1,0 +1,32 @@
+---
+import { cn } from "@/lib/utils";
+
+interface Props {
+  emoji: string;
+  heading: string;
+  description: string;
+  href: string;
+  linkText: string;
+  class?: string;
+}
+
+const { emoji, heading, description, href, linkText, class: className } = Astro.props;
+---
+
+<div
+  class:list={[
+    cn(
+      "w-full max-w-sm rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl",
+      className,
+    ),
+  ]}
+>
+  <div class="mb-4 text-5xl">{emoji}</div>
+  <h1 class="mb-3 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+    {heading}
+  </h1>
+  <p class="mb-6 text-blue-100/80">{description}</p>
+  <a href={href} class="text-sm text-purple-300 transition-colors hover:text-purple-200 hover:underline">
+    {linkText}
+  </a>
+</div>

@@ -1,0 +1,18 @@
+---
+import AuthFooterLink from "@/components/auth/AuthFooterLink.astro";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  prompt: string;
+  href: string;
+  linkText: string;
+  class?: string;
+}
+
+const { prompt, href, linkText, class: className } = Astro.props;
+---
+
+<p class:list={[cn("text-sm text-blue-100/60", className)]}>
+  {prompt}
+  <AuthFooterLink href={href}>{linkText}</AuthFooterLink>
+</p>
