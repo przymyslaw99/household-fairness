@@ -341,29 +341,29 @@ This is the first household-specific schema migration, so there is no existing h
 
 #### Automated
 
-- [x] 2.1 TypeScript domain files compile through `npm run build`.
-- [x] 2.2 `npm run lint` passes.
-- [x] 2.3 Score unit tests cover two-week filtering, undone completion exclusion, zero-total behavior, and raw point/percentage output.
-- [x] 2.4 Repository helper tests or type checks prove helpers use typed table contracts and do not require service-role access.
-- [x] 2.5 `npm run test:unit` passes.
+- [x] 2.1 TypeScript domain files compile through `npm run build`. — b5142d5
+- [x] 2.2 `npm run lint` passes. — b5142d5
+- [x] 2.3 Score unit tests cover two-week filtering, undone completion exclusion, zero-total behavior, and raw point/percentage output. — b5142d5
+- [x] 2.4 Repository helper tests or type checks prove helpers use typed table contracts and do not require service-role access. — b5142d5
+- [x] 2.5 `npm run test:unit` passes. — b5142d5
 
 #### Manual
 
-- [x] 2.6 Review `docs/reference/contract-surfaces.md` for concise F-01 alignment.
-- [x] 2.7 Confirm future slices can identify the correct helper, table, and field names.
+- [x] 2.6 Review `docs/reference/contract-surfaces.md` for concise F-01 alignment. — b5142d5
+- [x] 2.7 Confirm future slices can identify the correct helper, table, and field names. — b5142d5
 
 ### Phase 3: Verification Contract
 
 #### Automated
 
-- [ ] 3.1 Local database migration and RLS smoke test commands are documented and pass on a local Supabase instance.
-- [ ] 3.2 `npm run lint` passes.
-- [ ] 3.3 `npm run build` passes.
+- [x] 3.1 Local database migration and RLS smoke test commands are documented and pass on a local Supabase instance.
+- [x] 3.2 `npm run lint` passes.
+- [x] 3.3 `npm run build` passes.
 
 #### Manual
 
-- [ ] 3.5 Review the test list against the agreed planning decisions.
-- [ ] 3.6 Confirm verification output is recorded in the change folder.
+- [x] 3.5 Review the test list against the agreed planning decisions.
+- [x] 3.6 Confirm verification output is recorded in the change folder.
 
 ### Phase 4: Protected Route Readiness
 
