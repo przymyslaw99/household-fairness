@@ -369,11 +369,11 @@ This is the first household-specific schema migration, so there is no existing h
 
 #### Automated
 
-- [x] 4.1 Guard module compiles through `npm run build`.
-- [x] 4.2 `npm run lint` passes.
-- [x] 4.3 No nonexistent route is added to `PROTECTED_ROUTES`.
+- [x] 4.1 Guard module compiles through `npm run build`. — 80d4225
+- [x] 4.2 `npm run lint` passes. — 80d4225
+- [x] 4.3 No nonexistent route is added to `PROTECTED_ROUTES`. — 80d4225
 
 #### Manual
 
-- [x] 4.4 Confirm the guard contract distinguishes unauthenticated users from authenticated users without a household.
-- [x] 4.5 Confirm no UI route, API flow, or product behavior outside F-01 was implemented.
+- [x] 4.4 Confirm the guard contract distinguishes unauthenticated users from authenticated users without a household. — 80d4225
+- [x] 4.5 Confirm no UI route, API flow, or product behavior outside F-01 was implemented. — 80d4225
