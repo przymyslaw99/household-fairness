@@ -325,32 +325,32 @@ This is the first household-specific schema migration, so there is no existing h
 
 #### Automated
 
-- [x] 1.1 Migration file exists under `supabase/migrations/` and defines all five F-01 tables.
-- [x] 1.2 Migration applies cleanly in a local Supabase database with `npx supabase db reset`.
-- [x] 1.3 RLS smoke checks pass for member-only visibility, owner-only chore/invite writes, self-completion, and own undo.
-- [x] 1.4 Bootstrap smoke checks pass for first-household owner creation and invite-based join without service-role access.
-- [x] 1.5 `npm run lint` passes.
-- [x] 1.6 `npm run build` passes.
+- [x] 1.1 Migration file exists under `supabase/migrations/` and defines all five F-01 tables. — 5f3cf56
+- [x] 1.2 Migration applies cleanly in a local Supabase database with `npx supabase db reset`. — 5f3cf56
+- [x] 1.3 RLS smoke checks pass for member-only visibility, owner-only chore/invite writes, self-completion, and own undo. — 5f3cf56
+- [x] 1.4 Bootstrap smoke checks pass for first-household owner creation and invite-based join without service-role access. — 5f3cf56
+- [x] 1.5 `npm run lint` passes. — 5f3cf56
+- [x] 1.6 `npm run build` passes. — 5f3cf56
 
 #### Manual
 
-- [x] 1.7 Review migration against agreed MVP constraints.
-- [x] 1.8 Confirm F-01 did not introduce user-facing UI scope.
+- [x] 1.7 Review migration against agreed MVP constraints. — 5f3cf56
+- [x] 1.8 Confirm F-01 did not introduce user-facing UI scope. — 5f3cf56
 
 ### Phase 2: TypeScript Domain Layer
 
 #### Automated
 
-- [ ] 2.1 TypeScript domain files compile through `npm run build`.
-- [ ] 2.2 `npm run lint` passes.
-- [ ] 2.3 Score unit tests cover two-week filtering, undone completion exclusion, zero-total behavior, and raw point/percentage output.
-- [ ] 2.4 Repository helper tests or type checks prove helpers use typed table contracts and do not require service-role access.
-- [ ] 2.5 `npm run test:unit` passes.
+- [x] 2.1 TypeScript domain files compile through `npm run build`.
+- [x] 2.2 `npm run lint` passes.
+- [x] 2.3 Score unit tests cover two-week filtering, undone completion exclusion, zero-total behavior, and raw point/percentage output.
+- [x] 2.4 Repository helper tests or type checks prove helpers use typed table contracts and do not require service-role access.
+- [x] 2.5 `npm run test:unit` passes.
 
 #### Manual
 
-- [ ] 2.6 Review `docs/reference/contract-surfaces.md` for concise F-01 alignment.
-- [ ] 2.7 Confirm future slices can identify the correct helper, table, and field names.
+- [x] 2.6 Review `docs/reference/contract-surfaces.md` for concise F-01 alignment.
+- [x] 2.7 Confirm future slices can identify the correct helper, table, and field names.
 
 ### Phase 3: Verification Contract
 

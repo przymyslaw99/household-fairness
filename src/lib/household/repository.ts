@@ -1,0 +1,119 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type {
+  ActiveCompletionWithChore,
+  Chore,
+  HouseholdDatabase,
+  HouseholdInvite,
+  HouseholdMember,
+  Uuid,
+} from "./types";
+
+export type HouseholdSupabaseClient = SupabaseClient<HouseholdDatabase>;
+
+export type RepositoryResult<T> =
+  | { data: T; error: null }
+  | {
+      data: null;
+      error: {
+        message: string;
+      };
+    };
+
+export async function createCurrentUserHousehold(
+  supabase: HouseholdSupabaseClient,
+  householdName: string,
+): Promise<RepositoryResult<Uuid>> {
+  const { data, error } = await supabase.rpc("create_household_with_owner", {
+    household_name: householdName,
+  });
+
+  return toRepositoryResult(data, error);
+}
+
+export async function joinCurrentUserHouseholdByInvite(
+  supabase: HouseholdSupabaseClient,
+  inviteToken: string,
+): Promise<RepositoryResult<Uuid>> {
+  const { data, error } = await supabase.rpc("join_household_with_invite", {
+    invite_token: inviteToken,
+  });
+
+  return toRepositoryResult(data, error);
+}
+
+export async function getCurrentUserHouseholdMembership(
+  supabase: HouseholdSupabaseClient,
+): Promise<RepositoryResult<HouseholdMember | null>> {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    return { data: null, error: { message: userError.message } };
+  }
+
+  if (!user) {
+    return { data: null, error: null };
+  }
+
+  const { data, error } = await supabase.from("household_members").select("*").eq("user_id", user.id).maybeSingle();
+
+  return toRepositoryResult(data, error);
+}
+
+export async function listHouseholdChores(
+  supabase: HouseholdSupabaseClient,
+  householdId: Uuid,
+): Promise<RepositoryResult<Chore[]>> {
+  const { data, error } = await supabase
+    .from("chores")
+    .select("*")
+    .eq("household_id", householdId)
+    .order("created_at", { ascending: true });
+
+  return toRepositoryResult(data, error);
+}
+
+export async function listActiveRecentCompletions(
+  supabase: HouseholdSupabaseClient,
+  householdId: Uuid,
+  windowStart: Date,
+): Promise<RepositoryResult<ActiveCompletionWithChore[]>> {
+  const { data, error } = await supabase
+    .from("chore_completions")
+    .select("*, chores(id, name, weight)")
+    .eq("household_id", householdId)
+    .is("undone_at", null)
+    .gte("completed_at", windowStart.toISOString())
+    .order("completed_at", { ascending: false });
+
+  return toRepositoryResult(data, error);
+}
+
+export async function fetchActiveInviteByToken(
+  supabase: HouseholdSupabaseClient,
+  inviteToken: string,
+): Promise<RepositoryResult<HouseholdInvite | null>> {
+  const { data, error } = await supabase
+    .from("household_invites")
+    .select("*")
+    .eq("token", inviteToken)
+    .is("disabled_at", null)
+    .maybeSingle();
+
+  return toRepositoryResult(data, error);
+}
+
+function toRepositoryResult<T>(
+  data: T,
+  error: {
+    message: string;
+  } | null,
+): RepositoryResult<T> {
+  if (error) {
+    return { data: null, error: { message: error.message } };
+  }
+
+  return { data, error: null };
+}

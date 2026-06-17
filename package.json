@@ -8,6 +8,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "sync:ai-rules": "node scripts/sync-ai-rules.mjs",
+    "test:unit": "vitest run",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
@@ -53,6 +54,7 @@
     "supabase": "^2.23.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.2",
+    "vitest": "^4.1.9",
     "wrangler": "^4.100.0"
   },
   "overrides": {
