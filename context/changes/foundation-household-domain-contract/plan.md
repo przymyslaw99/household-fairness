@@ -356,24 +356,24 @@ This is the first household-specific schema migration, so there is no existing h
 
 #### Automated
 
-- [x] 3.1 Local database migration and RLS smoke test commands are documented and pass on a local Supabase instance.
-- [x] 3.2 `npm run lint` passes.
-- [x] 3.3 `npm run build` passes.
+- [x] 3.1 Local database migration and RLS smoke test commands are documented and pass on a local Supabase instance. — 9a5143c
+- [x] 3.2 `npm run lint` passes. — 9a5143c
+- [x] 3.3 `npm run build` passes. — 9a5143c
 
 #### Manual
 
-- [x] 3.5 Review the test list against the agreed planning decisions.
-- [x] 3.6 Confirm verification output is recorded in the change folder.
+- [x] 3.5 Review the test list against the agreed planning decisions. — 9a5143c
+- [x] 3.6 Confirm verification output is recorded in the change folder. — 9a5143c
 
 ### Phase 4: Protected Route Readiness
 
 #### Automated
 
-- [ ] 4.1 Guard module compiles through `npm run build`.
-- [ ] 4.2 `npm run lint` passes.
-- [ ] 4.3 No nonexistent route is added to `PROTECTED_ROUTES`.
+- [x] 4.1 Guard module compiles through `npm run build`.
+- [x] 4.2 `npm run lint` passes.
+- [x] 4.3 No nonexistent route is added to `PROTECTED_ROUTES`.
 
 #### Manual
 
-- [ ] 4.4 Confirm the guard contract distinguishes unauthenticated users from authenticated users without a household.
-- [ ] 4.5 Confirm no UI route, API flow, or product behavior outside F-01 was implemented.
+- [x] 4.4 Confirm the guard contract distinguishes unauthenticated users from authenticated users without a household.
+- [x] 4.5 Confirm no UI route, API flow, or product behavior outside F-01 was implemented.

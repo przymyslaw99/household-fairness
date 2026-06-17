@@ -31,6 +31,12 @@ This file records the load-bearing names introduced by `foundation-household-dom
 
 All helpers accept the request-scoped Supabase client created by `src/lib/supabase.ts`. They do not use service-role credentials.
 
+## Guard Helpers
+
+- `requireCurrentHouseholdMember(supabase, options)` returns `unauthenticated`, `missing_membership`, `wrong_role`, `allowed`, or `error`.
+- `resolveHouseholdGuard(input)` contains the pure guard decision logic used by tests.
+- `requiredRoles` accepts `owner` and/or `member` when a future route needs role-specific access.
+
 ## Score Invariants
 
 - Fairness Score uses a rolling 14-day window.
@@ -48,3 +54,10 @@ All helpers accept the request-scoped Supabase client created by `src/lib/supaba
 - Undo is soft; completion rows are not deleted.
 - Household data remains visible only to authenticated members of that household.
 - Invite links remain active until the owner disables them.
+
+## Used by Roadmap Slices
+
+- `S-01 Household setup`: use `create_household_with_owner`, `createCurrentUserHousehold`, `households`, and `household_members`.
+- `S-02 Invite joining`: use `join_household_with_invite`, `joinCurrentUserHouseholdByInvite`, `fetchActiveInviteByToken`, and `household_invites`.
+- `S-03 Chore completion`: use `chores`, `chore_completions`, `getCurrentUserHouseholdMembership`, `listHouseholdChores`, and `requireCurrentHouseholdMember`.
+- `S-04 Dashboard scoring`: use `listActiveRecentCompletions`, `calculateFairnessScore`, `SCORE_WINDOW_DAYS`, and the score invariants above.
