@@ -19,6 +19,7 @@ This file records the load-bearing names introduced by `foundation-household-dom
 
 - `create_household_with_owner(household_name text)`: authenticated user creates their first household and owner membership without service-role access.
 - `join_household_with_invite(invite_token text)`: authenticated user joins through an active invite as `member` without service-role access.
+- `fetch_active_invite_by_token(invite_token text)`: authenticated user reads one active invite by token without requiring existing household membership.
 
 ## Repository Helpers
 

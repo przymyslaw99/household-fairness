@@ -1,6 +1,6 @@
 begin;
 
-select plan(15);
+select plan(16);
 
 insert into auth.users (id, email, role, aud, email_confirmed_at, created_at, updated_at)
 values
@@ -63,6 +63,12 @@ select throws_ok(
 );
 
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000002', true);
+
+select is(
+  (select token from public.fetch_active_invite_by_token('phase-three-token-001')),
+  'phase-three-token-001',
+  'authenticated invitee can look up an active invite before joining'
+);
 
 select lives_ok(
   $$select public.join_household_with_invite('phase-three-token-001')$$,

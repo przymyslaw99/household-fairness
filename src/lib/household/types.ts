@@ -11,14 +11,16 @@ export const SCORE_WINDOW_MS = SCORE_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 export type IsoTimestamp = string;
 export type Uuid = string;
 
-export interface Household {
+type DbRecord = Record<string, unknown>;
+
+export interface Household extends DbRecord {
   id: Uuid;
   name: string;
   owner_id: Uuid;
   created_at: IsoTimestamp;
 }
 
-export interface HouseholdMember {
+export interface HouseholdMember extends DbRecord {
   id: Uuid;
   household_id: Uuid;
   user_id: Uuid;
@@ -26,7 +28,7 @@ export interface HouseholdMember {
   created_at: IsoTimestamp;
 }
 
-export interface Chore {
+export interface Chore extends DbRecord {
   id: Uuid;
   household_id: Uuid;
   name: string;
@@ -35,7 +37,7 @@ export interface Chore {
   created_at: IsoTimestamp;
 }
 
-export interface ChoreCompletion {
+export interface ChoreCompletion extends DbRecord {
   id: Uuid;
   household_id: Uuid;
   chore_id: Uuid;
@@ -46,7 +48,7 @@ export interface ChoreCompletion {
   created_at: IsoTimestamp;
 }
 
-export interface HouseholdInvite {
+export interface HouseholdInvite extends DbRecord {
   id: Uuid;
   household_id: Uuid;
   token: string;
@@ -79,11 +81,24 @@ export interface ActiveCompletionWithChore extends ChoreCompletion {
   chores: Pick<Chore, "id" | "name" | "weight"> | null;
 }
 
-interface TableDefinition<Row, Insert = Partial<Row>, Update = Partial<Row>> {
+interface DbRelationship {
+  foreignKeyName: string;
+  columns: string[];
+  isOneToOne?: boolean;
+  referencedRelation: string;
+  referencedColumns: string[];
+}
+
+interface TableDefinition<
+  Row extends DbRecord,
+  Insert extends DbRecord = Partial<Row>,
+  Update extends DbRecord = Partial<Row>,
+  Relationships extends DbRelationship[] = [],
+> {
   Row: Row;
   Insert: Insert;
   Update: Update;
-  Relationships: [];
+  Relationships: Relationships;
 }
 
 export interface HouseholdDatabase {
@@ -105,7 +120,16 @@ export interface HouseholdDatabase {
         ChoreCompletion,
         Pick<ChoreCompletion, "household_id" | "chore_id" | "completed_by"> &
           Partial<Pick<ChoreCompletion, "id" | "completed_at" | "undone_at" | "undone_by" | "created_at">>,
-        Partial<Pick<ChoreCompletion, "undone_at" | "undone_by">>
+        Partial<Pick<ChoreCompletion, "undone_at" | "undone_by">>,
+        [
+          {
+            foreignKeyName: "chore_completions_household_id_chore_id_fkey";
+            columns: ["household_id", "chore_id"];
+            isOneToOne: false;
+            referencedRelation: "chores";
+            referencedColumns: ["household_id", "id"];
+          },
+        ]
       >;
       household_invites: TableDefinition<
         HouseholdInvite,
@@ -123,6 +147,10 @@ export interface HouseholdDatabase {
       join_household_with_invite: {
         Args: { invite_token: string };
         Returns: Uuid;
+      };
+      fetch_active_invite_by_token: {
+        Args: { invite_token: string };
+        Returns: HouseholdInvite[];
       };
       is_household_member: {
         Args: { target_household_id: Uuid };

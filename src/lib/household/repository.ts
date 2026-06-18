@@ -27,7 +27,7 @@ export async function createCurrentUserHousehold(
     household_name: householdName,
   });
 
-  return toRepositoryResult(data, error);
+  return toRequiredRepositoryResult(data, error);
 }
 
 export async function joinCurrentUserHouseholdByInvite(
@@ -38,7 +38,7 @@ export async function joinCurrentUserHouseholdByInvite(
     invite_token: inviteToken,
   });
 
-  return toRepositoryResult(data, error);
+  return toRequiredRepositoryResult(data, error);
 }
 
 export async function getCurrentUserHouseholdMembership(
@@ -72,7 +72,7 @@ export async function listHouseholdChores(
     .eq("household_id", householdId)
     .order("created_at", { ascending: true });
 
-  return toRepositoryResult(data, error);
+  return toRepositoryResult(data ?? [], error);
 }
 
 export async function listActiveRecentCompletions(
@@ -88,7 +88,7 @@ export async function listActiveRecentCompletions(
     .gte("completed_at", windowStart.toISOString())
     .order("completed_at", { ascending: false });
 
-  return toRepositoryResult(data, error);
+  return toRepositoryResult(data ?? [], error);
 }
 
 export async function fetchActiveInviteByToken(
@@ -96,10 +96,9 @@ export async function fetchActiveInviteByToken(
   inviteToken: string,
 ): Promise<RepositoryResult<HouseholdInvite | null>> {
   const { data, error } = await supabase
-    .from("household_invites")
-    .select("*")
-    .eq("token", inviteToken)
-    .is("disabled_at", null)
+    .rpc("fetch_active_invite_by_token", {
+      invite_token: inviteToken,
+    })
     .maybeSingle();
 
   return toRepositoryResult(data, error);
@@ -113,6 +112,23 @@ function toRepositoryResult<T>(
 ): RepositoryResult<T> {
   if (error) {
     return { data: null, error: { message: error.message } };
+  }
+
+  return { data, error: null };
+}
+
+function toRequiredRepositoryResult<T>(
+  data: T | null,
+  error: {
+    message: string;
+  } | null,
+): RepositoryResult<T> {
+  if (error) {
+    return { data: null, error: { message: error.message } };
+  }
+
+  if (data === null) {
+    return { data: null, error: { message: "Expected data was not returned." } };
   }
 
   return { data, error: null };

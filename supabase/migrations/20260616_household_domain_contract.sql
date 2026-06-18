@@ -281,7 +281,36 @@ begin
 end;
 $$;
 
+create function public.fetch_active_invite_by_token(invite_token text)
+returns table (
+  id uuid,
+  household_id uuid,
+  token text,
+  created_by uuid,
+  created_at timestamptz,
+  disabled_at timestamptz
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select
+    hi.id,
+    hi.household_id,
+    hi.token,
+    hi.created_by,
+    hi.created_at,
+    hi.disabled_at
+  from public.household_invites hi
+  where hi.token = btrim(invite_token)
+    and hi.disabled_at is null
+  limit 1;
+$$;
+
 revoke all on function public.create_household_with_owner(text) from public;
 revoke all on function public.join_household_with_invite(text) from public;
+revoke all on function public.fetch_active_invite_by_token(text) from public;
 grant execute on function public.create_household_with_owner(text) to authenticated;
 grant execute on function public.join_household_with_invite(text) to authenticated;
+grant execute on function public.fetch_active_invite_by_token(text) to authenticated;
