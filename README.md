@@ -1,198 +1,118 @@
-# 10x Astro Starter
+# Household Fairness
 
-![](./public/template.png)
+Household Fairness is an MVP for making household work visible and easier to discuss. It tracks members, chores, contributions, and a simple fairness score so a household can see whether responsibilities are balanced without turning the app into an automatic settlement or gamification system.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+The product favors explicit, owner-defined rules over hidden automation. A household owner defines the chores and expectations; members can see the resulting balance and the current fairness percentage.
+
+## Product Scope
+
+The MVP focuses on:
+
+- household setup with owner and member roles;
+- owner-managed chores and responsibilities;
+- visible contribution tracking;
+- a simple fairness score;
+- clear household-level state that can be reviewed and adjusted manually.
+
+The MVP intentionally avoids:
+
+- automatic financial settlement;
+- complex gamification;
+- hidden scoring rules;
+- background automation that changes household responsibilities without an explicit user action.
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+- Astro for pages, routing, and mostly static UI.
+- React for interactive components only.
+- Tailwind CSS for styling.
+- Supabase for auth and persistence.
+- Server-side environment access through `astro:env/server`.
 
-## Prerequisites
-
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+Keep Supabase credentials on the server side. Do not expose `SUPABASE_URL`, `SUPABASE_KEY`, or equivalent secrets to client code.
 
 ## Getting Started
 
-1. Clone the repository:
-
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
-
-2. Install dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
+Create the required local environment variables using the project's environment setup. Keep secret values out of Git and out of client-side code.
 
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
-
-```bash
-cp .env.example .dev.vars
-```
-
-5. Run the development server:
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-## Available Scripts
-
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
-
-## Project Structure
-
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
-```
-
-## Supabase Configuration
-
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
-
-### First-time setup (local, no cloud project needed)
-
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
+Before finishing a change, run:
 
 ```bash
-cp .env.example .env
-```
-
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
-
-```bash
-npx supabase init
-```
-
-3. Start the local stack (downloads Docker images on first run):
-
-```bash
-npx supabase start
-```
-
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
-
-```
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
-```
-
-5. To stop the stack when done:
-
-```bash
-npx supabase stop
-```
-
-The local Studio UI is available at `http://localhost:54323`.
-
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
-
-### Using a cloud Supabase project instead
-
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
-
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
-
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
-```
-
-### Email confirmation in local development
-
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
-
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
-
-Users can then sign in immediately after sign-up without clicking a confirmation link.
-
-### Auth routes
-
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
-
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
-
-## Deployment
-
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
-
-1. Build the project:
-
-```bash
+npm run lint
 npm run build
 ```
 
-2. Deploy with Wrangler:
+For formatter or ESLint auto-fixes, run:
 
 ```bash
-npx wrangler deploy
+npm run lint:fix
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
+If lint still fails after `lint:fix`, inspect the remaining errors instead of hand-editing formatter-only noise.
 
-### Switching to a different Cloudflare or Supabase account
+## Useful Scripts
 
-If you move this project to a different account, update the account-bound resources before the next deploy:
+The full script list lives in `package.json`. The commands used most often are:
 
-1. Create a new Cloudflare KV namespace for sessions:
+- `npm run dev` - start local development.
+- `npm run lint` - run lint checks.
+- `npm run lint:fix` - apply supported lint and formatting fixes.
+- `npm run build` - create a production build.
+- `npm run sync:ai-rules` - sync AI instruction mirrors when applicable.
 
-```bash
-npx wrangler kv namespace create SESSION
+## Project Structure
+
+- `src/pages/` contains Astro pages, auth pages, and API routes.
+- `src/pages/api/auth/` contains redirect-based auth handlers.
+- `src/middleware.ts` resolves the current user and protects configured routes.
+- `src/lib/supabase.ts` creates the server-side Supabase client from request cookies.
+- `src/components/ui/` contains shared UI primitives.
+- `src/components/auth/` contains auth form components.
+- `supabase/migrations/` contains database migrations and RLS policy changes.
+- `context/` contains project planning, change records, and foundation documents.
+
+## Auth And Protected Routes
+
+Protected pages are controlled by `PROTECTED_ROUTES` in `src/middleware.ts`. When adding a protected route, update that list and confirm that an anonymous request redirects to `/auth/signin`.
+
+Auth handlers live under `src/pages/api/auth/`. Keep auth behavior server-oriented and avoid exposing server secrets or privileged Supabase access to the browser.
+
+## Development Rules
+
+Use `AGENTS.md` as the source of truth for AI and repo-specific operating rules. `CLAUDE.md` is a generated mirror and should remain identical when synced.
+
+Code conventions:
+
+- Use `@/*` imports for paths that would otherwise traverse above the current feature directory.
+- Use relative imports only for same-folder siblings such as `./Button`.
+- Use `cn()` from `src/lib/utils.ts` for conditional Tailwind classes.
+- Prefer Astro components for static UI.
+- Use React only where interactivity is needed.
+- Do not add Next.js directives such as `"use client"`.
+- Enable RLS and least-privilege policies for new Supabase tables.
+
+Do not modify files under `context/archive/`; archived changes are immutable history.
+
+## CI And Review
+
+CI configuration lives in `.github/workflows/ci.yml`. Keep local verification aligned with CI by running lint and build before handing off a change.
+
+For implementation review, this repository follows the 10xDevs review chain:
+
+```text
+/10x-implement -> /10x-impl-review -> triage -> (/10x-lesson | fix | skip | disagree)
 ```
 
-2. Copy the returned namespace id into `wrangler.jsonc` as the `kv_namespaces[0].id` value.
-
-3. Set new Worker secrets from the target Supabase project:
-
-```bash
-npx wrangler secret put SUPABASE_URL
-npx wrangler secret put SUPABASE_KEY
-```
-
-4. Update local `.env` and `.dev.vars` to the new Supabase project's URL and `anon` key.
-
-5. If you use GitHub Actions, replace `SUPABASE_URL` and `SUPABASE_KEY` in repository secrets too.
-
-## CI
-
-GitHub Actions runs lint + build on every push and PR to `main`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
-
-## License
-
-MIT
+Review findings are triaged by impact. Critical findings should be fixed; low-impact findings can be consciously skipped or recorded as accepted risk.
