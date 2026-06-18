@@ -325,55 +325,55 @@ This is the first household-specific schema migration, so there is no existing h
 
 #### Automated
 
-- [x] 1.1 Migration file exists under `supabase/migrations/` and defines all five F-01 tables. — 5f3cf56
-- [x] 1.2 Migration applies cleanly in a local Supabase database with `npx supabase db reset`. — 5f3cf56
-- [x] 1.3 RLS smoke checks pass for member-only visibility, owner-only chore/invite writes, self-completion, and own undo. — 5f3cf56
-- [x] 1.4 Bootstrap smoke checks pass for first-household owner creation and invite-based join without service-role access. — 5f3cf56
-- [x] 1.5 `npm run lint` passes. — 5f3cf56
-- [x] 1.6 `npm run build` passes. — 5f3cf56
+- [x] 1.1 Migration file exists under `supabase/migrations/` and defines all five F-01 tables. — d6d6de6
+- [x] 1.2 Migration applies cleanly in a local Supabase database with `npx supabase db reset`. — d6d6de6
+- [x] 1.3 RLS smoke checks pass for member-only visibility, owner-only chore/invite writes, self-completion, and own undo. — d6d6de6
+- [x] 1.4 Bootstrap smoke checks pass for first-household owner creation and invite-based join without service-role access. — d6d6de6
+- [x] 1.5 `npm run lint` passes. — d6d6de6
+- [x] 1.6 `npm run build` passes. — d6d6de6
 
 #### Manual
 
-- [x] 1.7 Review migration against agreed MVP constraints. — 5f3cf56
-- [x] 1.8 Confirm F-01 did not introduce user-facing UI scope. — 5f3cf56
+- [x] 1.7 Review migration against agreed MVP constraints. — d6d6de6
+- [x] 1.8 Confirm F-01 did not introduce user-facing UI scope. — d6d6de6
 
 ### Phase 2: TypeScript Domain Layer
 
 #### Automated
 
-- [x] 2.1 TypeScript domain files compile through `npm run build`. — b5142d5
-- [x] 2.2 `npm run lint` passes. — b5142d5
-- [x] 2.3 Score unit tests cover two-week filtering, undone completion exclusion, zero-total behavior, and raw point/percentage output. — b5142d5
-- [x] 2.4 Repository helper tests or type checks prove helpers use typed table contracts and do not require service-role access. — b5142d5
-- [x] 2.5 `npm run test:unit` passes. — b5142d5
+- [x] 2.1 TypeScript domain files compile through `npm run build`. — 142d7a4
+- [x] 2.2 `npm run lint` passes. — 142d7a4
+- [x] 2.3 Score unit tests cover two-week filtering, undone completion exclusion, zero-total behavior, and raw point/percentage output. — 142d7a4
+- [x] 2.4 Repository helper tests or type checks prove helpers use typed table contracts and do not require service-role access. — 142d7a4
+- [x] 2.5 `npm run test:unit` passes. — 142d7a4
 
 #### Manual
 
-- [x] 2.6 Review `docs/reference/contract-surfaces.md` for concise F-01 alignment. — b5142d5
-- [x] 2.7 Confirm future slices can identify the correct helper, table, and field names. — b5142d5
+- [x] 2.6 Review `docs/reference/contract-surfaces.md` for concise F-01 alignment. — 142d7a4
+- [x] 2.7 Confirm future slices can identify the correct helper, table, and field names. — 142d7a4
 
 ### Phase 3: Verification Contract
 
 #### Automated
 
-- [x] 3.1 Local database migration and RLS smoke test commands are documented and pass on a local Supabase instance. — 9a5143c
-- [x] 3.2 `npm run lint` passes. — 9a5143c
-- [x] 3.3 `npm run build` passes. — 9a5143c
+- [x] 3.1 Local database migration and RLS smoke test commands are documented and pass on a local Supabase instance. — 934c9a9
+- [x] 3.2 `npm run lint` passes. — 934c9a9
+- [x] 3.3 `npm run build` passes. — 934c9a9
 
 #### Manual
 
-- [x] 3.5 Review the test list against the agreed planning decisions. — 9a5143c
-- [x] 3.6 Confirm verification output is recorded in the change folder. — 9a5143c
+- [x] 3.5 Review the test list against the agreed planning decisions. — 934c9a9
+- [x] 3.6 Confirm verification output is recorded in the change folder. — 934c9a9
 
 ### Phase 4: Protected Route Readiness
 
 #### Automated
 
-- [x] 4.1 Guard module compiles through `npm run build`. — 80d4225
-- [x] 4.2 `npm run lint` passes. — 80d4225
-- [x] 4.3 No nonexistent route is added to `PROTECTED_ROUTES`. — 80d4225
+- [x] 4.1 Guard module compiles through `npm run build`. — 5f3324c
+- [x] 4.2 `npm run lint` passes. — 5f3324c
+- [x] 4.3 No nonexistent route is added to `PROTECTED_ROUTES`. — 5f3324c
 
 #### Manual
 
-- [x] 4.4 Confirm the guard contract distinguishes unauthenticated users from authenticated users without a household. — 80d4225
-- [x] 4.5 Confirm no UI route, API flow, or product behavior outside F-01 was implemented. — 80d4225
+- [x] 4.4 Confirm the guard contract distinguishes unauthenticated users from authenticated users without a household. — 5f3324c
+- [x] 4.5 Confirm no UI route, API flow, or product behavior outside F-01 was implemented. — 5f3324c
