@@ -5,8 +5,10 @@ import type {
   HouseholdDatabase,
   HouseholdInvite,
   HouseholdMember,
+  HouseholdSetupRpcChore,
   Uuid,
 } from "./types";
+import type { HouseholdSetupInput } from "./setup";
 
 export type HouseholdSupabaseClient = SupabaseClient<HouseholdDatabase>;
 
@@ -36,6 +38,18 @@ export async function joinCurrentUserHouseholdByInvite(
 ): Promise<RepositoryResult<Uuid>> {
   const { data, error } = await supabase.rpc("join_household_with_invite", {
     invite_token: inviteToken,
+  });
+
+  return toRequiredRepositoryResult(data, error);
+}
+
+export async function createCurrentUserHouseholdSetup(
+  supabase: HouseholdSupabaseClient,
+  input: HouseholdSetupInput,
+): Promise<RepositoryResult<Uuid>> {
+  const { data, error } = await supabase.rpc("create_household_with_initial_chores", {
+    household_name: input.householdName,
+    chores: input.chores as HouseholdSetupRpcChore[],
   });
 
   return toRequiredRepositoryResult(data, error);

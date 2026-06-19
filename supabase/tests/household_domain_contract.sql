@@ -1,6 +1,6 @@
 begin;
 
-select plan(16);
+select plan(19);
 
 insert into auth.users (id, email, role, aud, email_confirmed_at, created_at, updated_at)
 values
@@ -25,6 +25,15 @@ values
   (
     '00000000-0000-4000-8000-000000000003',
     'household-outsider@example.test',
+    'authenticated',
+    'authenticated',
+    now(),
+    now(),
+    now()
+  ),
+  (
+    '00000000-0000-4000-8000-000000000004',
+    'setup-owner@example.test',
     'authenticated',
     'authenticated',
     now(),
@@ -203,6 +212,47 @@ select is(
   ),
   1::bigint,
   'member can undo own completion'
+);
+
+select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000004', true);
+
+select lives_ok(
+  $$
+    select public.create_household_with_initial_chores(
+      'Setup Household',
+      jsonb_build_array(
+        jsonb_build_object('name', 'Take out trash', 'weight', 3),
+        jsonb_build_object('name', 'Vacuum', 'weight', 5)
+      )
+    )
+  $$,
+  'authenticated owner can create a household with initial chores atomically'
+);
+
+select is(
+  (
+    select count(*)
+    from public.chores c
+    inner join public.households h
+      on h.id = c.household_id
+    where h.owner_id = '00000000-0000-4000-8000-000000000004'
+  ),
+  2::bigint,
+  'setup RPC creates the initial chore rows in the new household'
+);
+
+select throws_ok(
+  $$
+    select public.create_household_with_initial_chores(
+      'Broken Setup Household',
+      jsonb_build_array(
+        jsonb_build_object('name', '  ', 'weight', 1)
+      )
+    )
+  $$,
+  'P0001',
+  'Chore name is required',
+  'setup RPC rejects invalid chore input before leaving partial setup state'
 );
 
 select * from finish();

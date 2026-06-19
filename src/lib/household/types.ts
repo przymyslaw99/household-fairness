@@ -77,6 +77,11 @@ export interface FairnessScoreResult {
   members: FairnessScoreMember[];
 }
 
+export interface HouseholdSetupRpcChore extends DbRecord {
+  name: string;
+  weight: number;
+}
+
 export interface ActiveCompletionWithChore extends ChoreCompletion {
   chores: Pick<Chore, "id" | "name" | "weight"> | null;
 }
@@ -142,6 +147,10 @@ export interface HouseholdDatabase {
     Functions: {
       create_household_with_owner: {
         Args: { household_name: string };
+        Returns: Uuid;
+      };
+      create_household_with_initial_chores: {
+        Args: { household_name: string; chores: HouseholdSetupRpcChore[] };
         Returns: Uuid;
       };
       join_household_with_invite: {
