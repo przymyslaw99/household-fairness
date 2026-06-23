@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateHouseholdSetupInput } from "./setup";
+import { parseHouseholdSetupFormData, validateHouseholdSetupInput } from "./setup";
 
 describe("validateHouseholdSetupInput", () => {
   it("trims a valid payload and returns normalized data", () => {
@@ -95,5 +95,40 @@ describe("validateHouseholdSetupInput", () => {
       { name: "Chore names must be unique" },
       { name: "Chore names must be unique" },
     ]);
+  });
+});
+
+describe("parseHouseholdSetupFormData", () => {
+  it("parses repeated chore fields into the setup draft shape", () => {
+    const formData = new FormData();
+    formData.set("householdName", "Flat 7");
+    formData.append("choreName", "Dishes");
+    formData.append("choreWeight", "2");
+    formData.append("choreName", "Vacuum");
+    formData.append("choreWeight", "5");
+
+    expect(parseHouseholdSetupFormData(formData)).toEqual({
+      householdName: "Flat 7",
+      chores: [
+        { name: "Dishes", weight: "2" },
+        { name: "Vacuum", weight: "5" },
+      ],
+    });
+  });
+
+  it("parses indexed chore fields and fills missing values with empty strings", () => {
+    const formData = new FormData();
+    formData.set("householdName", "Flat 7");
+    formData.set("chores[1].name", "Vacuum");
+    formData.set("chores[1].weight", "5");
+    formData.set("chores[3][name]", "Dishes");
+
+    expect(parseHouseholdSetupFormData(formData)).toEqual({
+      householdName: "Flat 7",
+      chores: [
+        { name: "Vacuum", weight: "5" },
+        { name: "Dishes", weight: "" },
+      ],
+    });
   });
 });

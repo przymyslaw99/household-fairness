@@ -317,32 +317,32 @@ This change may add an S-01-specific Supabase function on top of the existing F-
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly with `npx supabase db reset`.
-- [x] 1.2 Supabase DB tests pass with `npx supabase db test supabase/tests/household_domain_contract.sql`.
-- [x] 1.3 S-01 validation unit tests pass with `npm run test:unit`.
-- [x] 1.4 Existing unit tests continue to pass with `npm run test:unit`.
-- [x] 1.5 `npm run lint` passes.
-- [x] 1.6 `npm run build` passes.
+- [x] 1.1 Migration applies cleanly with `npx supabase db reset`. — 09acea6
+- [x] 1.2 Supabase DB tests pass with `npx supabase db test supabase/tests/household_domain_contract.sql`. — 09acea6
+- [x] 1.3 S-01 validation unit tests pass with `npm run test:unit`. — 09acea6
+- [x] 1.4 Existing unit tests continue to pass with `npm run test:unit`. — 09acea6
+- [x] 1.5 `npm run lint` passes. — 09acea6
+- [x] 1.6 `npm run build` passes. — 09acea6
 
 #### Manual
 
-- [x] 1.7 Review the setup contract and confirm it creates a household plus at least one owner chore without service-role access.
-- [x] 1.8 Confirm the contract does not introduce invite, member-management, or chore-editing scope.
+- [x] 1.7 Review the setup contract and confirm it creates a household plus at least one owner chore without service-role access. — 09acea6
+- [x] 1.8 Confirm the contract does not introduce invite, member-management, or chore-editing scope. — 09acea6
 
 ### Phase 2: Setup Route And Form
 
 #### Automated
 
-- [ ] 2.1 Setup validation tests cover empty household name, zero chores, empty chore name, non-positive weight, non-integer weight, duplicate names after trimming/case normalization, and a valid multi-chore payload.
-- [ ] 2.2 `npm run test:unit` passes.
-- [ ] 2.3 `npm run lint` passes.
-- [ ] 2.4 `npm run build` passes.
+- [x] 2.1 Setup validation tests cover empty household name, zero chores, empty chore name, non-positive weight, non-integer weight, duplicate names after trimming/case normalization, and a valid multi-chore payload.
+- [x] 2.2 `npm run test:unit` passes.
+- [x] 2.3 `npm run lint` passes.
+- [x] 2.4 `npm run build` passes.
 
 #### Manual
 
-- [ ] 2.5 Authenticated user without a household can open `/setup/household`, add multiple chore rows, submit, and land on `/dashboard`.
-- [ ] 2.6 Form blocks duplicate chore names, missing names, and invalid weights before submission where possible.
-- [ ] 2.7 Server-side validation returns a clear `?error=` state when malformed form data is submitted.
+- [x] 2.5 Authenticated user without a household can open `/setup/household`, add multiple chore rows, submit, and land on `/dashboard`.
+- [x] 2.6 Form blocks duplicate chore names, missing names, and invalid weights before submission where possible.
+- [x] 2.7 Server-side validation returns a clear `?error=` state when malformed form data is submitted.
 
 ### Phase 3: Guards And Redirects
 

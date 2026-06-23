@@ -34,6 +34,8 @@ export interface HouseholdSetupValidationResult {
   errors: HouseholdSetupValidationErrors;
 }
 
+const INDEXED_CHORE_FIELD_PATTERN = /^chores\[(\d+)\](?:\.|\[)(name|weight)\]?$/;
+
 export function validateHouseholdSetupInput(input: HouseholdSetupDraft): HouseholdSetupValidationResult {
   const normalizedHouseholdName = input.householdName.trim();
   const choreErrors: HouseholdSetupChoreErrors[] = input.chores.map(() => ({}));
@@ -103,6 +105,13 @@ export function validateHouseholdSetupInput(input: HouseholdSetupDraft): Househo
   };
 }
 
+export function parseHouseholdSetupFormData(formData: FormData): HouseholdSetupDraft {
+  return {
+    householdName: readStringValue(formData.get("householdName")),
+    chores: parseIndexedChores(formData) ?? parseRepeatedChores(formData),
+  };
+}
+
 function normalizePositiveInteger(value: number | string): number | null {
   const normalized = typeof value === "string" ? value.trim() : value;
 
@@ -117,4 +126,49 @@ function normalizePositiveInteger(value: number | string): number | null {
   }
 
   return parsed;
+}
+
+function parseIndexedChores(formData: FormData): HouseholdSetupChoreDraft[] | null {
+  const indexedDrafts = new Map<number, Partial<HouseholdSetupChoreDraft>>();
+
+  for (const [key, value] of formData.entries()) {
+    const match = INDEXED_CHORE_FIELD_PATTERN.exec(key);
+
+    if (!match) {
+      continue;
+    }
+
+    const index = Number(match[1]);
+    const field = match[2] as keyof HouseholdSetupChoreDraft;
+    const current = indexedDrafts.get(index) ?? {};
+
+    current[field] = readStringValue(value);
+    indexedDrafts.set(index, current);
+  }
+
+  if (indexedDrafts.size === 0) {
+    return null;
+  }
+
+  return [...indexedDrafts.entries()]
+    .sort(([left], [right]) => left - right)
+    .map(([, value]) => ({
+      name: value.name ?? "",
+      weight: value.weight ?? "",
+    }));
+}
+
+function parseRepeatedChores(formData: FormData): HouseholdSetupChoreDraft[] {
+  const names = formData.getAll("choreName").map(readStringValue);
+  const weights = formData.getAll("choreWeight").map(readStringValue);
+  const choreCount = Math.max(names.length, weights.length);
+
+  return Array.from({ length: choreCount }, (_, index) => ({
+    name: names[index] ?? "",
+    weight: weights[index] ?? "",
+  }));
+}
+
+function readStringValue(value: FormDataEntryValue | null): string {
+  return typeof value === "string" ? value : "";
 }

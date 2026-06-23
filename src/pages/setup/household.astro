@@ -1,0 +1,16 @@
+---
+import AuthCard from "@/components/auth/AuthCard.astro";
+import HouseholdSetupForm from "@/components/household/HouseholdSetupForm";
+import Layout from "@/layouts/Layout.astro";
+
+const error = Astro.url.searchParams.get("error");
+---
+
+<Layout title="Set up household">
+  <AuthCard title="Create your household" class="max-w-2xl">
+    <p class="mb-6 text-center text-sm text-blue-100/70">
+      Start with one household name and the first chore weights your group will use.
+    </p>
+    <HouseholdSetupForm serverError={error} client:load />
+  </AuthCard>
+</Layout>

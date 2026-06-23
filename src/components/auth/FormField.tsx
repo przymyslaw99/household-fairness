@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 import { CircleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +13,8 @@ interface FormFieldProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  inputMode?: InputHTMLAttributes<HTMLInputElement>["inputMode"];
+  pattern?: string;
   error?: string;
   hint?: ReactNode;
   icon: ReactNode;
@@ -27,6 +29,8 @@ export function FormField({
   value,
   onChange,
   placeholder,
+  inputMode,
+  pattern,
   error,
   hint,
   icon,
@@ -48,6 +52,8 @@ export function FormField({
             onChange(e.target.value);
           }}
           placeholder={placeholder}
+          inputMode={inputMode}
+          pattern={pattern}
           className={cn(
             inputBase,
             error ? "border-red-400/60 focus:ring-red-400" : "border-white/20 focus:ring-purple-400",
