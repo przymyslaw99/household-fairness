@@ -1,9 +1,13 @@
 ---
 import AuthCard from "@/components/auth/AuthCard.astro";
 import HouseholdSetupForm from "@/components/household/HouseholdSetupForm";
+import { getCurrentUserHouseholdMembership } from "@/lib/household/repository";
+import { createClient } from "@/lib/supabase";
 import Layout from "@/layouts/Layout.astro";
 
-const error = Astro.url.searchParams.get("error");
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const membershipResult = supabase ? await getCurrentUserHouseholdMembership(supabase) : null;
+const error = membershipResult?.error?.message ?? Astro.url.searchParams.get("error");
 ---
 
 <Layout title="Set up household">

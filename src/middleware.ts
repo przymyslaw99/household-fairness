@@ -1,8 +1,9 @@
 import { defineMiddleware } from "astro:middleware";
+import { getCurrentUserHouseholdMembership } from "@/lib/household/repository";
 import { createClient } from "@/lib/supabase";
 
 // Add only real household routes here; F-01 defines contracts without reserving route names.
-const PROTECTED_ROUTES = ["/dashboard"];
+const PROTECTED_ROUTES = ["/dashboard", "/setup/household"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -19,6 +20,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (PROTECTED_ROUTES.some((route) => context.url.pathname.startsWith(route))) {
     if (!context.locals.user) {
       return context.redirect("/auth/signin");
+    }
+
+    if (context.url.pathname.startsWith("/setup/household") && supabase) {
+      const membershipResult = await getCurrentUserHouseholdMembership(supabase);
+
+      if (!membershipResult.error && membershipResult.data) {
+        return context.redirect("/dashboard");
+      }
     }
   }
 

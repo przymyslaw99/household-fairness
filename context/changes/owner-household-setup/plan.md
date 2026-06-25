@@ -348,17 +348,17 @@ This change may add an S-01-specific Supabase function on top of the existing F-
 
 #### Automated
 
-- [ ] 3.1 `npm run test:unit` passes.
-- [ ] 3.2 `npm run lint` passes.
-- [ ] 3.3 `npm run build` passes.
+- [x] 3.1 `npm run test:unit` passes.
+- [x] 3.2 `npm run lint` passes.
+- [x] 3.3 `npm run build` passes.
 
 #### Manual
 
-- [ ] 3.4 Anonymous request to `/setup/household` redirects to `/auth/signin`.
-- [ ] 3.5 Authenticated user with no household sees setup.
-- [ ] 3.6 Authenticated user with an existing household is redirected to `/dashboard`.
-- [ ] 3.7 Direct POST by a user with existing membership does not create a second household.
-- [ ] 3.8 Anonymous POST to `/api/household/setup` redirects to `/auth/signin` or otherwise fails without creating a household.
+- [x] 3.4 Anonymous request to `/setup/household` redirects to `/auth/signin`.
+- [x] 3.5 Authenticated user with no household sees setup.
+- [x] 3.6 Authenticated user with an existing household is redirected to `/dashboard`.
+- [x] 3.7 Direct POST by a user with existing membership does not create a second household.
+- [x] 3.8 Anonymous POST to `/api/household/setup` redirects to `/auth/signin` or otherwise fails without creating a household.
 
 ### Phase 4: Verification And Handoff
 

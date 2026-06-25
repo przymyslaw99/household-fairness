@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { createCurrentUserHouseholdSetup } from "@/lib/household/repository";
+import { createCurrentUserHouseholdSetup, getCurrentUserHouseholdMembership } from "@/lib/household/repository";
 import { parseHouseholdSetupFormData, validateHouseholdSetupInput } from "@/lib/household/setup";
 import { createClient } from "@/lib/supabase";
 
@@ -10,7 +10,7 @@ export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
 
   if (!supabase) {
-    return context.redirect(`${SETUP_ROUTE}?error=${encodeURIComponent("Supabase is not configured")}`);
+    return redirectToSetupError(context, "Supabase is not configured");
   }
 
   const {
@@ -19,24 +19,34 @@ export const POST: APIRoute = async (context) => {
   } = await supabase.auth.getUser();
 
   if (userError) {
-    return context.redirect(`${SETUP_ROUTE}?error=${encodeURIComponent(userError.message)}`);
+    return redirectToSetupError(context, userError.message);
   }
 
   if (!user) {
     return context.redirect(SIGN_IN_ROUTE);
   }
 
+  const membershipResult = await getCurrentUserHouseholdMembership(supabase);
+
+  if (membershipResult.error) {
+    return redirectToSetupError(context, membershipResult.error.message);
+  }
+
+  if (membershipResult.data) {
+    return context.redirect("/dashboard");
+  }
+
   const formData = await context.request.formData();
   const validation = validateHouseholdSetupInput(parseHouseholdSetupFormData(formData));
 
   if (!validation.data) {
-    return context.redirect(`${SETUP_ROUTE}?error=${encodeURIComponent(formatValidationError(validation.errors))}`);
+    return redirectToSetupError(context, formatValidationError(validation.errors));
   }
 
   const result = await createCurrentUserHouseholdSetup(supabase, validation.data);
 
   if (result.error) {
-    return context.redirect(`${SETUP_ROUTE}?error=${encodeURIComponent(result.error.message)}`);
+    return redirectToSetupError(context, result.error.message);
   }
 
   return context.redirect("/dashboard");
@@ -62,4 +72,8 @@ function formatValidationError(errors: ReturnType<typeof validateHouseholdSetupI
   }
 
   return "Enter a valid household setup";
+}
+
+function redirectToSetupError(context: Parameters<APIRoute>[0], message: string) {
+  return context.redirect(`${SETUP_ROUTE}?error=${encodeURIComponent(message)}`);
 }
