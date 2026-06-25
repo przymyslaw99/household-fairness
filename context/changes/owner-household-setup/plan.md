@@ -364,14 +364,14 @@ This change may add an S-01-specific Supabase function on top of the existing F-
 
 #### Automated
 
-- [x] 4.1 `context/changes/owner-household-setup/verification.md` exists and lists the commands run.
-- [x] 4.2 `npm run test:unit` passes.
-- [x] 4.3 `npm run lint` passes.
-- [x] 4.4 `npm run build` passes.
-- [x] 4.5 If a migration is added, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
+- [x] 4.1 `context/changes/owner-household-setup/verification.md` exists and lists the commands run. — ee8b88c
+- [x] 4.2 `npm run test:unit` passes. — ee8b88c
+- [x] 4.3 `npm run lint` passes. — ee8b88c
+- [x] 4.4 `npm run build` passes. — ee8b88c
+- [x] 4.5 If a migration is added, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass. — ee8b88c
 
 #### Manual
 
-- [x] 4.6 Confirm S-01 delivers only household setup plus initial chore weights.
-- [x] 4.7 Confirm later slices can rely on the setup output: household membership exists, owner role exists, and at least one visible weighted chore exists.
-- [x] 4.8 Confirm no invite, completion, or dashboard-score behavior was added accidentally.
+- [x] 4.6 Confirm S-01 delivers only household setup plus initial chore weights. — ee8b88c
+- [x] 4.7 Confirm later slices can rely on the setup output: household membership exists, owner role exists, and at least one visible weighted chore exists. — ee8b88c
+- [x] 4.8 Confirm no invite, completion, or dashboard-score behavior was added accidentally. — ee8b88c
