@@ -348,30 +348,30 @@ This change may add an S-01-specific Supabase function on top of the existing F-
 
 #### Automated
 
-- [x] 3.1 `npm run test:unit` passes.
-- [x] 3.2 `npm run lint` passes.
-- [x] 3.3 `npm run build` passes.
+- [x] 3.1 `npm run test:unit` passes. — 1d51c77
+- [x] 3.2 `npm run lint` passes. — 1d51c77
+- [x] 3.3 `npm run build` passes. — 1d51c77
 
 #### Manual
 
-- [x] 3.4 Anonymous request to `/setup/household` redirects to `/auth/signin`.
-- [x] 3.5 Authenticated user with no household sees setup.
-- [x] 3.6 Authenticated user with an existing household is redirected to `/dashboard`.
-- [x] 3.7 Direct POST by a user with existing membership does not create a second household.
-- [x] 3.8 Anonymous POST to `/api/household/setup` redirects to `/auth/signin` or otherwise fails without creating a household.
+- [x] 3.4 Anonymous request to `/setup/household` redirects to `/auth/signin`. — 1d51c77
+- [x] 3.5 Authenticated user with no household sees setup. — 1d51c77
+- [x] 3.6 Authenticated user with an existing household is redirected to `/dashboard`. — 1d51c77
+- [x] 3.7 Direct POST by a user with existing membership does not create a second household. — 1d51c77
+- [x] 3.8 Anonymous POST to `/api/household/setup` redirects to `/auth/signin` or otherwise fails without creating a household. — 1d51c77
 
 ### Phase 4: Verification And Handoff
 
 #### Automated
 
-- [ ] 4.1 `context/changes/owner-household-setup/verification.md` exists and lists the commands run.
-- [ ] 4.2 `npm run test:unit` passes.
-- [ ] 4.3 `npm run lint` passes.
-- [ ] 4.4 `npm run build` passes.
-- [ ] 4.5 If a migration is added, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
+- [x] 4.1 `context/changes/owner-household-setup/verification.md` exists and lists the commands run.
+- [x] 4.2 `npm run test:unit` passes.
+- [x] 4.3 `npm run lint` passes.
+- [x] 4.4 `npm run build` passes.
+- [x] 4.5 If a migration is added, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
 
 #### Manual
 
-- [ ] 4.6 Confirm S-01 delivers only household setup plus initial chore weights.
-- [ ] 4.7 Confirm later slices can rely on the setup output: household membership exists, owner role exists, and at least one visible weighted chore exists.
-- [ ] 4.8 Confirm no invite, completion, or dashboard-score behavior was added accidentally.
+- [x] 4.6 Confirm S-01 delivers only household setup plus initial chore weights.
+- [x] 4.7 Confirm later slices can rely on the setup output: household membership exists, owner role exists, and at least one visible weighted chore exists.
+- [x] 4.8 Confirm no invite, completion, or dashboard-score behavior was added accidentally.

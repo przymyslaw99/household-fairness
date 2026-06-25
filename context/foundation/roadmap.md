@@ -26,7 +26,7 @@ The north star here means the first complete user-visible outcome that proves th
 | ID | Type | Change ID | Outcome | Prerequisites | PRD refs | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | F-01 | foundation | `foundation-household-domain-contract` | Define the smallest shared household domain contract needed for household ownership, membership, chore weights, completion ownership, two-week score calculation, and household-only visibility. | `None` | `US-01`, `US-02`, `US-03`, `FR-002`, `FR-006`, `FR-007`, `FR-009`, `FR-010` | `ready` |
-| S-01 | slice | `owner-household-setup` | Let an authenticated owner create a household and define the first chore weights that the shared score will use. | `F-01` | `US-03`, `FR-001`, `FR-002`, `FR-006` | `proposed` |
+| S-01 | slice | `owner-household-setup` | Let an authenticated owner create a household and define the first chore weights that the shared score will use. | `F-01` | `US-03`, `FR-001`, `FR-002`, `FR-006` | `implemented` |
 | S-02 | slice | `invite-lifecycle-and-join` | Let the owner open an invite path, let a second member join the household through it, and let the owner stop new joins by disabling the active link. | `F-01`, `S-01` | `US-03`, `FR-003`, `FR-004`, `FR-005` | `proposed` |
 | S-03 | slice | `member-completion-loop` | Let a household member see chore weights, record their own completion, undo a mistake, and create the recent history entry that feeds the shared score. | `F-01`, `S-01`, `S-02` | `US-02`, `FR-007`, `FR-008`, `FR-009` | `proposed` |
 | S-04 | slice | `shared-fairness-dashboard` | Show each household member's current percentage share, supporting raw points, and recent completed chores from the rolling two-week window in a neutral shared dashboard. | `F-01`, `S-03` | `US-01`, `FR-010` | `proposed` |
@@ -84,7 +84,7 @@ Unknowns: `None`
 
 Risk: If this slice includes polished member-management or post-creation editing flows, it will absorb later scope that the MVP explicitly parked.
 
-Status: `proposed`
+Status: `implemented`
 
 ### S-02: Invite lifecycle and join
 
@@ -151,7 +151,7 @@ Status: `proposed`
 | Roadmap ID | Change ID | Status | Why it exists | Start after |
 | --- | --- | --- | --- | --- |
 | F-01 | `foundation-household-domain-contract` | `ready` | Creates the smallest shared domain contract needed before any vertical household flow can be planned safely. | `None` |
-| S-01 | `owner-household-setup` | `proposed` | Creates the first owner-visible setup path for the shared scoring model. | `F-01` |
+| S-01 | `owner-household-setup` | `implemented` | Creates the first owner-visible setup path for the shared scoring model. | `F-01` |
 | S-02 | `invite-lifecycle-and-join` | `proposed` | Connects the owner setup flow to a real second household member and keeps invite access under owner control. | `F-01`, `S-01` |
 | S-03 | `member-completion-loop` | `proposed` | Creates the first trustworthy recorded contribution event that can feed the score. | `F-01`, `S-01`, `S-02` |
 | S-04 | `shared-fairness-dashboard` | `proposed` | Delivers the first live shared fairness view that proves the product's value. | `F-01`, `S-03` |

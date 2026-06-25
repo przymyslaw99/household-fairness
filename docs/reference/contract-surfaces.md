@@ -18,12 +18,14 @@ This file records the load-bearing names introduced by `foundation-household-dom
 ## Database Entry Points
 
 - `create_household_with_owner(household_name text)`: authenticated user creates their first household and owner membership without service-role access.
+- `create_household_with_initial_chores(household_name text, chores jsonb)`: authenticated user creates their first household, owner membership, and initial weighted chores in one atomic operation without service-role access.
 - `join_household_with_invite(invite_token text)`: authenticated user joins through an active invite as `member` without service-role access.
 - `fetch_active_invite_by_token(invite_token text)`: authenticated user reads one active invite by token without requiring existing household membership.
 
 ## Repository Helpers
 
 - `createCurrentUserHousehold(supabase, householdName)`
+- `createCurrentUserHouseholdSetup(supabase, input)`
 - `joinCurrentUserHouseholdByInvite(supabase, inviteToken)`
 - `getCurrentUserHouseholdMembership(supabase)`
 - `listHouseholdChores(supabase, householdId)`
@@ -58,7 +60,7 @@ All helpers accept the request-scoped Supabase client created by `src/lib/supaba
 
 ## Used by Roadmap Slices
 
-- `S-01 Household setup`: use `create_household_with_owner`, `createCurrentUserHousehold`, `households`, and `household_members`.
+- `S-01 Household setup`: use `create_household_with_initial_chores`, `createCurrentUserHouseholdSetup`, `getCurrentUserHouseholdMembership`, `households`, `household_members`, and `chores`.
 - `S-02 Invite joining`: use `join_household_with_invite`, `joinCurrentUserHouseholdByInvite`, `fetchActiveInviteByToken`, and `household_invites`.
 - `S-03 Chore completion`: use `chores`, `chore_completions`, `getCurrentUserHouseholdMembership`, `listHouseholdChores`, and `requireCurrentHouseholdMember`.
 - `S-04 Dashboard scoring`: use `listActiveRecentCompletions`, `calculateFairnessScore`, `SCORE_WINDOW_DAYS`, and the score invariants above.
