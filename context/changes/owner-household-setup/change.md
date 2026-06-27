@@ -1,9 +1,9 @@
 ---
 change_id: owner-household-setup
 title: Owner household setup
-status: implemented
+status: impl_reviewed
 created: 2026-06-18
-updated: 2026-06-25
+updated: 2026-06-27
 archived_at: null
 ---
 
