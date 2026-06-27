@@ -22,3 +22,22 @@ Date: 2026-06-25
 
 - Docker Desktop must be running before `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` can pass locally.
 - `npm run build` still prints the pre-existing Astro sitemap warning because `astro.config` does not set `site`.
+
+## Implementation Review Fix Verification
+
+Date: 2026-06-27
+
+| Command | Result | Notes |
+| --- | --- | --- |
+| `npm run test:unit` | Pass | `3` test files passed, `19` tests passed after setup validation limits were added. |
+| `npx supabase db reset` | Pass | Applied `20260616_household_domain_contract.sql` and `20260618_owner_household_setup.sql`; Supabase CLI noted a newer version is available. |
+| `npx supabase db test supabase/tests/household_domain_contract.sql` | Pass | pgTAP suite passed: `Files=1, Tests=24, Result: PASS`. |
+| `npm run lint` | Pass | Completed successfully. ESLint printed repeated `astro-eslint-parser` `projectService` warnings but exited `0`. |
+| `npm run build` | Pass | Build completed successfully. Astro emitted the existing sitemap warning about missing `site` config. |
+
+Review fixes applied:
+
+- Normalized missing, null, invalid, and out-of-range setup RPC chore weights to the same validation error.
+- Added setup payload bounds: household names and chore names are capped at 80 characters, and initial chores are capped at 20.
+- Capped parsed chore rows before validation to avoid carrying oversized malformed form submissions.
+- Replaced raw setup repository/RPC error reflection with a stable user-facing setup failure message.

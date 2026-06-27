@@ -1,6 +1,6 @@
 begin;
 
-select plan(19);
+select plan(24);
 
 insert into auth.users (id, email, role, aud, email_confirmed_at, created_at, updated_at)
 values
@@ -253,6 +253,77 @@ select throws_ok(
   'P0001',
   'Chore name is required',
   'setup RPC rejects invalid chore input before leaving partial setup state'
+);
+
+select throws_ok(
+  $$
+    select public.create_household_with_initial_chores(
+      'Missing Weight Household',
+      jsonb_build_array(
+        jsonb_build_object('name', 'Dishes')
+      )
+    )
+  $$,
+  'P0001',
+  'Chore weight must be a positive integer',
+  'setup RPC rejects missing chore weight before leaving partial setup state'
+);
+
+select throws_ok(
+  $$
+    select public.create_household_with_initial_chores(
+      'Out Of Range Weight Household',
+      jsonb_build_array(
+        jsonb_build_object('name', 'Dishes', 'weight', '999999999999999999999999')
+      )
+    )
+  $$,
+  'P0001',
+  'Chore weight must be a positive integer',
+  'setup RPC normalizes out-of-range chore weight to validation failure'
+);
+
+select throws_ok(
+  $$
+    select public.create_household_with_initial_chores(
+      repeat('A', 81),
+      jsonb_build_array(
+        jsonb_build_object('name', 'Dishes', 'weight', 1)
+      )
+    )
+  $$,
+  'P0001',
+  'Household name must be 80 characters or fewer',
+  'setup RPC rejects overlong household names'
+);
+
+select throws_ok(
+  $$
+    select public.create_household_with_initial_chores(
+      'Overlong Chore Household',
+      jsonb_build_array(
+        jsonb_build_object('name', repeat('A', 81), 'weight', 1)
+      )
+    )
+  $$,
+  'P0001',
+  'Chore name must be 80 characters or fewer',
+  'setup RPC rejects overlong chore names'
+);
+
+select throws_ok(
+  $$
+    select public.create_household_with_initial_chores(
+      'Too Many Chores Household',
+      (
+        select jsonb_agg(jsonb_build_object('name', 'Chore ' || item, 'weight', 1))
+        from generate_series(1, 21) as item
+      )
+    )
+  $$,
+  'P0001',
+  'Add no more than 20 chores',
+  'setup RPC rejects oversized chore arrays'
 );
 
 select * from finish();

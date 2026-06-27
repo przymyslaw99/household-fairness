@@ -34,11 +34,19 @@ export interface HouseholdSetupValidationResult {
   errors: HouseholdSetupValidationErrors;
 }
 
+export const HOUSEHOLD_SETUP_LIMITS = {
+  maxHouseholdNameLength: 80,
+  maxChoreNameLength: 80,
+  maxChores: 20,
+} as const;
+
 const INDEXED_CHORE_FIELD_PATTERN = /^chores\[(\d+)\](?:\.|\[)(name|weight)\]?$/;
+const MAX_PARSED_CHORES = HOUSEHOLD_SETUP_LIMITS.maxChores + 1;
 
 export function validateHouseholdSetupInput(input: HouseholdSetupDraft): HouseholdSetupValidationResult {
   const normalizedHouseholdName = input.householdName.trim();
-  const choreErrors: HouseholdSetupChoreErrors[] = input.chores.map(() => ({}));
+  const choresToValidate = input.chores.slice(0, HOUSEHOLD_SETUP_LIMITS.maxChores);
+  const choreErrors: HouseholdSetupChoreErrors[] = choresToValidate.map(() => ({}));
   const normalizedChores: HouseholdSetupChoreInput[] = [];
   const duplicateGroups = new Map<string, number[]>();
   let householdNameError: string | undefined;
@@ -46,18 +54,24 @@ export function validateHouseholdSetupInput(input: HouseholdSetupDraft): Househo
 
   if (!normalizedHouseholdName) {
     householdNameError = "Household name is required";
+  } else if (normalizedHouseholdName.length > HOUSEHOLD_SETUP_LIMITS.maxHouseholdNameLength) {
+    householdNameError = `Household name must be ${HOUSEHOLD_SETUP_LIMITS.maxHouseholdNameLength} characters or fewer`;
   }
 
   if (input.chores.length === 0) {
     formError = "Add at least one chore";
+  } else if (input.chores.length > HOUSEHOLD_SETUP_LIMITS.maxChores) {
+    formError = `Add no more than ${HOUSEHOLD_SETUP_LIMITS.maxChores} chores`;
   }
 
-  input.chores.forEach((chore, index) => {
+  choresToValidate.forEach((chore, index) => {
     const normalizedName = chore.name.trim();
     const weight = normalizePositiveInteger(chore.weight);
 
     if (!normalizedName) {
       choreErrors[index].name = "Chore name is required";
+    } else if (normalizedName.length > HOUSEHOLD_SETUP_LIMITS.maxChoreNameLength) {
+      choreErrors[index].name = `Chore name must be ${HOUSEHOLD_SETUP_LIMITS.maxChoreNameLength} characters or fewer`;
     } else {
       const duplicateKey = normalizedName.toLocaleLowerCase();
       const existingIndexes = duplicateGroups.get(duplicateKey) ?? [];
@@ -140,6 +154,12 @@ function parseIndexedChores(formData: FormData): HouseholdSetupChoreDraft[] | nu
 
     const index = Number(match[1]);
     const field = match[2] as keyof HouseholdSetupChoreDraft;
+    const isNewIndex = !indexedDrafts.has(index);
+
+    if (isNewIndex && indexedDrafts.size >= MAX_PARSED_CHORES) {
+      continue;
+    }
+
     const current = indexedDrafts.get(index) ?? {};
 
     current[field] = readStringValue(value);
@@ -159,8 +179,8 @@ function parseIndexedChores(formData: FormData): HouseholdSetupChoreDraft[] | nu
 }
 
 function parseRepeatedChores(formData: FormData): HouseholdSetupChoreDraft[] {
-  const names = formData.getAll("choreName").map(readStringValue);
-  const weights = formData.getAll("choreWeight").map(readStringValue);
+  const names = formData.getAll("choreName").slice(0, MAX_PARSED_CHORES).map(readStringValue);
+  const weights = formData.getAll("choreWeight").slice(0, MAX_PARSED_CHORES).map(readStringValue);
   const choreCount = Math.max(names.length, weights.length);
 
   return Array.from({ length: choreCount }, (_, index) => ({

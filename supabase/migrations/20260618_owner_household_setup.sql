@@ -15,6 +15,9 @@ declare
   normalized_chore_name text;
   chore_weight integer;
   normalized_names text[] := array[]::text[];
+  max_household_name_length constant integer := 80;
+  max_chore_name_length constant integer := 80;
+  max_chores constant integer := 20;
 begin
   if current_user_id is null then
     raise exception 'Authentication required';
@@ -24,8 +27,16 @@ begin
     raise exception 'Household name is required';
   end if;
 
+  if char_length(normalized_household_name) > max_household_name_length then
+    raise exception 'Household name must be % characters or fewer', max_household_name_length;
+  end if;
+
   if chores is null or jsonb_typeof(chores) <> 'array' or jsonb_array_length(chores) = 0 then
     raise exception 'At least one chore is required';
+  end if;
+
+  if jsonb_array_length(chores) > max_chores then
+    raise exception 'Add no more than % chores', max_chores;
   end if;
 
   for chore_item in
@@ -38,6 +49,10 @@ begin
       raise exception 'Chore name is required';
     end if;
 
+    if char_length(normalized_chore_name) > max_chore_name_length then
+      raise exception 'Chore name must be % characters or fewer', max_chore_name_length;
+    end if;
+
     if lower(normalized_chore_name) = any(normalized_names) then
       raise exception 'Duplicate chore names are not allowed';
     end if;
@@ -47,11 +62,11 @@ begin
     begin
       chore_weight := (chore_item->>'weight')::integer;
     exception
-      when invalid_text_representation then
+      when invalid_text_representation or numeric_value_out_of_range then
         raise exception 'Chore weight must be a positive integer';
     end;
 
-    if chore_weight <= 0 then
+    if chore_weight is null or chore_weight <= 0 then
       raise exception 'Chore weight must be a positive integer';
     end if;
   end loop;

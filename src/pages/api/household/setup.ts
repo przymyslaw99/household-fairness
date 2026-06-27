@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase";
 
 const SETUP_ROUTE = "/setup/household";
 const SIGN_IN_ROUTE = "/auth/signin";
+const SETUP_FAILED_MESSAGE = "We could not create your household. Please check the form and try again.";
 
 export const POST: APIRoute = async (context) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -46,7 +47,7 @@ export const POST: APIRoute = async (context) => {
   const result = await createCurrentUserHouseholdSetup(supabase, validation.data);
 
   if (result.error) {
-    return redirectToSetupError(context, result.error.message);
+    return redirectToSetupError(context, SETUP_FAILED_MESSAGE);
   }
 
   return context.redirect("/dashboard");

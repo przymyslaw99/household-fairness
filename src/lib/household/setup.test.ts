@@ -35,6 +35,16 @@ describe("validateHouseholdSetupInput", () => {
     expect(result.errors.householdName).toBe("Household name is required");
   });
 
+  it("rejects an overlong household name", () => {
+    const result = validateHouseholdSetupInput({
+      householdName: "A".repeat(81),
+      chores: [{ name: "Dishes", weight: 2 }],
+    });
+
+    expect(result.data).toBeNull();
+    expect(result.errors.householdName).toBe("Household name must be 80 characters or fewer");
+  });
+
   it("requires at least one chore", () => {
     const result = validateHouseholdSetupInput({
       householdName: "Flat 7",
@@ -43,6 +53,19 @@ describe("validateHouseholdSetupInput", () => {
 
     expect(result.data).toBeNull();
     expect(result.errors.form).toBe("Add at least one chore");
+  });
+
+  it("rejects more than the maximum chore count", () => {
+    const result = validateHouseholdSetupInput({
+      householdName: "Flat 7",
+      chores: Array.from({ length: 21 }, (_, index) => ({
+        name: `Chore ${index + 1}`,
+        weight: 1,
+      })),
+    });
+
+    expect(result.data).toBeNull();
+    expect(result.errors.form).toBe("Add no more than 20 chores");
   });
 
   it("rejects empty chore names", () => {
@@ -54,6 +77,18 @@ describe("validateHouseholdSetupInput", () => {
     expect(result.data).toBeNull();
     expect(result.errors.chores[0]).toEqual({
       name: "Chore name is required",
+    });
+  });
+
+  it("rejects overlong chore names", () => {
+    const result = validateHouseholdSetupInput({
+      householdName: "Flat 7",
+      chores: [{ name: "A".repeat(81), weight: 2 }],
+    });
+
+    expect(result.data).toBeNull();
+    expect(result.errors.chores[0]).toEqual({
+      name: "Chore name must be 80 characters or fewer",
     });
   });
 
