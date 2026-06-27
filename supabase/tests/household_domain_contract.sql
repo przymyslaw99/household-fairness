@@ -1,6 +1,6 @@
 begin;
 
-select plan(24);
+select plan(30);
 
 insert into auth.users (id, email, role, aud, email_confirmed_at, created_at, updated_at)
 values
@@ -49,6 +49,16 @@ select lives_ok(
   'authenticated user can create their first household as owner'
 );
 
+select set_config(
+  'test.phase_three_household_id',
+  (
+    select id::text
+    from public.households
+    where owner_id = '00000000-0000-4000-8000-000000000001'
+  ),
+  true
+);
+
 select lives_ok(
   $$
     insert into public.household_invites (household_id, token, created_by)
@@ -71,21 +81,74 @@ select throws_ok(
   'one active invite per household is enforced'
 );
 
+select is(
+  (
+    select token
+    from public.create_or_get_active_invite(
+      (
+        select id
+        from public.households
+        where owner_id = '00000000-0000-4000-8000-000000000001'
+      ),
+      'phase-three-token-004'
+    )
+  ),
+  'phase-three-token-001',
+  'owner create-or-get returns the existing active invite'
+);
+
+select is(
+  (
+    select token
+    from public.disable_active_invite(
+      (
+        select id
+        from public.households
+        where owner_id = '00000000-0000-4000-8000-000000000001'
+      )
+    )
+  ),
+  'phase-three-token-001',
+  'owner can disable the current active invite'
+);
+
+select is(
+  (select count(*) from public.fetch_active_invite_by_token('phase-three-token-001')),
+  0::bigint,
+  'disabled invite is no longer returned from the active invite lookup'
+);
+
+select is(
+  (
+    select token
+    from public.create_or_get_active_invite(
+      (
+        select id
+        from public.households
+        where owner_id = '00000000-0000-4000-8000-000000000001'
+      ),
+      'phase-three-token-004'
+    )
+  ),
+  'phase-three-token-004',
+  'owner can create a new active invite after disabling the previous one'
+);
+
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000002', true);
 
 select is(
-  (select token from public.fetch_active_invite_by_token('phase-three-token-001')),
-  'phase-three-token-001',
+  (select token from public.fetch_active_invite_by_token('phase-three-token-004')),
+  'phase-three-token-004',
   'authenticated invitee can look up an active invite before joining'
 );
 
 select lives_ok(
-  $$select public.join_household_with_invite('phase-three-token-001')$$,
+  $$select public.join_household_with_invite('phase-three-token-004')$$,
   'authenticated invitee can join through an active invite'
 );
 
 select throws_ok(
-  $$select public.join_household_with_invite('phase-three-token-001')$$,
+  $$select public.join_household_with_invite('phase-three-token-004')$$,
   '23505',
   'duplicate key value violates unique constraint "household_members_user_id_key"',
   'one-household-per-user is enforced during join'
@@ -98,6 +161,29 @@ select is(
 );
 
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000003', true);
+
+select throws_ok(
+  $$
+    select public.create_or_get_active_invite(
+      current_setting('test.phase_three_household_id')::uuid,
+      'phase-three-token-005'
+    )
+  $$,
+  'P0001',
+  'Only household owners can manage invites',
+  'non-owner cannot create or reuse an active invite'
+);
+
+select throws_ok(
+  $$
+    select public.disable_active_invite(
+      current_setting('test.phase_three_household_id')::uuid
+    )
+  $$,
+  'P0001',
+  'Only household owners can manage invites',
+  'non-owner cannot disable an active invite'
+);
 
 select is(
   (select count(*) from public.households),

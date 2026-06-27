@@ -118,6 +118,49 @@ export async function fetchActiveInviteByToken(
   return toRepositoryResult(data, error);
 }
 
+export async function getActiveInviteForHousehold(
+  supabase: HouseholdSupabaseClient,
+  householdId: Uuid,
+): Promise<RepositoryResult<HouseholdInvite | null>> {
+  const { data, error } = await supabase
+    .from("household_invites")
+    .select("*")
+    .eq("household_id", householdId)
+    .is("disabled_at", null)
+    .order("created_at", { ascending: false })
+    .maybeSingle();
+
+  return toRepositoryResult(data, error);
+}
+
+export async function createActiveInviteForCurrentOwner(
+  supabase: HouseholdSupabaseClient,
+  householdId: Uuid,
+  token: string,
+): Promise<RepositoryResult<HouseholdInvite>> {
+  const { data, error } = await supabase
+    .rpc("create_or_get_active_invite", {
+      target_household_id: householdId,
+      invite_token: token,
+    })
+    .maybeSingle();
+
+  return toRequiredRepositoryResult(data, error);
+}
+
+export async function disableActiveInviteForCurrentOwner(
+  supabase: HouseholdSupabaseClient,
+  householdId: Uuid,
+): Promise<RepositoryResult<HouseholdInvite | null>> {
+  const { data, error } = await supabase
+    .rpc("disable_active_invite", {
+      target_household_id: householdId,
+    })
+    .maybeSingle();
+
+  return toRepositoryResult(data, error);
+}
+
 function toRepositoryResult<T>(
   data: T,
   error: {

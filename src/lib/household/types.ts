@@ -161,6 +161,14 @@ export interface HouseholdDatabase {
         Args: { invite_token: string };
         Returns: HouseholdInvite[];
       };
+      create_or_get_active_invite: {
+        Args: { target_household_id: Uuid; invite_token: string };
+        Returns: HouseholdInvite[];
+      };
+      disable_active_invite: {
+        Args: { target_household_id: Uuid };
+        Returns: HouseholdInvite[];
+      };
       is_household_member: {
         Args: { target_household_id: Uuid };
         Returns: boolean;
