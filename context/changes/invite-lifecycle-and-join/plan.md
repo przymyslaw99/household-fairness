@@ -486,32 +486,32 @@ S-02 should prefer existing F-01 tables and functions. Add a migration only if t
 
 #### Automated
 
-- [x] 4.1 Guard/helper tests cover owner allowed, member denied for invite management, missing membership allowed for join confirmation, and existing membership blocked from duplicate join where practical.
-- [x] 4.2 Anonymous request to `/household/invite` redirects to `/auth/signin`.
-- [x] 4.3 `npm run test:unit` passes.
-- [x] 4.4 `npm run lint` passes.
-- [x] 4.5 `npm run build` passes.
+- [x] 4.1 Guard/helper tests cover owner allowed, member denied for invite management, missing membership allowed for join confirmation, and existing membership blocked from duplicate join where practical. — 66b7845
+- [x] 4.2 Anonymous request to `/household/invite` redirects to `/auth/signin`. — 66b7845
+- [x] 4.3 `npm run test:unit` passes. — 66b7845
+- [x] 4.4 `npm run lint` passes. — 66b7845
+- [x] 4.5 `npm run build` passes. — 66b7845
 
 #### Manual
 
-- [x] 4.6 Owner can manage invites from the owner route.
-- [x] 4.7 Member cannot manage invites.
-- [x] 4.8 User with no household can join from a valid invite.
-- [x] 4.9 User who already belongs to a household cannot join again through the same or another invite.
-- [x] 4.10 `/join/<token>` remains usable as a shareable link for signed-out users.
+- [x] 4.6 Owner can manage invites from the owner route. — 66b7845
+- [x] 4.7 Member cannot manage invites. — 66b7845
+- [x] 4.8 User with no household can join from a valid invite. — 66b7845
+- [x] 4.9 User who already belongs to a household cannot join again through the same or another invite. — 66b7845
+- [x] 4.10 `/join/<token>` remains usable as a shareable link for signed-out users. — 66b7845
 
 ### Phase 5: Verification And Documentation
 
 #### Automated
 
-- [ ] 5.1 `context/changes/invite-lifecycle-and-join/verification.md` exists and lists all commands run.
-- [ ] 5.2 `npm run test:unit` passes.
-- [ ] 5.3 `npm run lint` passes.
-- [ ] 5.4 `npm run build` passes.
-- [ ] 5.5 If migrations changed, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
+- [x] 5.1 `context/changes/invite-lifecycle-and-join/verification.md` exists and lists all commands run.
+- [x] 5.2 `npm run test:unit` passes.
+- [x] 5.3 `npm run lint` passes.
+- [x] 5.4 `npm run build` passes.
+- [x] 5.5 If migrations changed, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
 
 #### Manual
 
-- [ ] 5.6 Confirm S-02 delivers only invite link creation/reuse, invite disabling, preserved auth redirect, and confirmed join.
-- [ ] 5.7 Confirm S-03 can rely on at least two household members after a successful join.
-- [ ] 5.8 Confirm no member-removal, completion, or dashboard-score behavior was added accidentally.
+- [x] 5.6 Confirm S-02 delivers only invite link creation/reuse, invite disabling, preserved auth redirect, and confirmed join.
+- [x] 5.7 Confirm S-03 can rely on at least two household members after a successful join.
+- [x] 5.8 Confirm no member-removal, completion, or dashboard-score behavior was added accidentally.
