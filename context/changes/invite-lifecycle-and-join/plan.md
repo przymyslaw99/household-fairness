@@ -436,32 +436,32 @@ S-02 should prefer existing F-01 tables and functions. Add a migration only if t
 
 #### Automated
 
-- [x] 1.1 Invite domain unit tests pass with `npm run test:unit`.
-- [x] 1.2 Migration applies cleanly with `npx supabase db reset` if a migration is added.
-- [x] 1.3 Supabase DB tests pass with `npx supabase db test supabase/tests/household_domain_contract.sql` after adding S-02 invite cases.
-- [x] 1.4 Linting passes with `npm run lint`.
-- [x] 1.5 Production build passes with `npm run build`.
+- [x] 1.1 Invite domain unit tests pass with `npm run test:unit`. — 720d636
+- [x] 1.2 Migration applies cleanly with `npx supabase db reset` if a migration is added. — 720d636
+- [x] 1.3 Supabase DB tests pass with `npx supabase db test supabase/tests/household_domain_contract.sql` after adding S-02 invite cases. — 720d636
+- [x] 1.4 Linting passes with `npm run lint`. — 720d636
+- [x] 1.5 Production build passes with `npm run build`. — 720d636
 
 #### Manual
 
-- [x] 1.6 Review the domain contract and confirm it exposes only active invite creation/reuse and disable behavior.
-- [x] 1.7 Confirm no member administration, removal, token expiry, or multi-household scope was added.
+- [x] 1.6 Review the domain contract and confirm it exposes only active invite creation/reuse and disable behavior. — 720d636
+- [x] 1.7 Confirm no member administration, removal, token expiry, or multi-household scope was added. — 720d636
 
 ### Phase 2: Owner Invite Page And API
 
 #### Automated
 
-- [ ] 2.1 Owner invite helper tests cover create-or-reuse behavior, disable behavior, invalid token rejection, and non-owner denial where testable.
-- [ ] 2.2 `npm run test:unit` passes.
-- [ ] 2.3 `npm run lint` passes.
-- [ ] 2.4 `npm run build` passes.
+- [x] 2.1 Owner invite helper tests cover create-or-reuse behavior, disable behavior, invalid token rejection, and non-owner denial where testable.
+- [x] 2.2 `npm run test:unit` passes.
+- [x] 2.3 `npm run lint` passes.
+- [x] 2.4 `npm run build` passes.
 
 #### Manual
 
-- [ ] 2.5 Authenticated owner opens `/household/invite`, sees no active link before creation, clicks create, and sees a copyable link.
-- [ ] 2.6 Reloading the invite page does not create a second active invite.
-- [ ] 2.7 Owner disables the active link and the page no longer presents it as usable.
-- [ ] 2.8 A non-owner household member cannot create or disable household invites.
+- [x] 2.5 Authenticated owner opens `/household/invite`, sees no active link before creation, clicks create, and sees a copyable link.
+- [x] 2.6 Reloading the invite page does not create a second active invite.
+- [x] 2.7 Owner disables the active link and the page no longer presents it as usable.
+- [x] 2.8 A non-owner household member cannot create or disable household invites.
 
 ### Phase 3: Invite Join Route And Auth Preservation
 
