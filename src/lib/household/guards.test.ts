@@ -37,6 +37,24 @@ describe("resolveHouseholdGuard", () => {
     });
   });
 
+  it("allows owners through owner-only invite management guards", () => {
+    const ownerMembership = {
+      ...MEMBERSHIP,
+      role: HOUSEHOLD_ROLES.owner,
+    };
+
+    expect(
+      resolveHouseholdGuard({
+        isAuthenticated: true,
+        membership: ownerMembership,
+        requiredRoles: [HOUSEHOLD_ROLES.owner],
+      }),
+    ).toEqual({
+      status: "allowed",
+      member: ownerMembership,
+    });
+  });
+
   it("allows household members when no role is required or the role matches", () => {
     expect(resolveHouseholdGuard({ isAuthenticated: true, membership: MEMBERSHIP })).toEqual({
       status: "allowed",

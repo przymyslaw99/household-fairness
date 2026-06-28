@@ -467,38 +467,38 @@ S-02 should prefer existing F-01 tables and functions. Add a migration only if t
 
 #### Automated
 
-- [x] 3.1 Redirect-target validation tests reject external URLs and allow only safe local paths across sign-in and sign-up flows.
-- [x] 3.2 Join helper tests cover invalid token, disabled invite, already-member join, and successful join mapping where practical.
-- [x] 3.3 `npm run test:unit` passes.
-- [x] 3.4 `npm run lint` passes.
-- [x] 3.5 `npm run build` passes.
+- [x] 3.1 Redirect-target validation tests reject external URLs and allow only safe local paths across sign-in and sign-up flows. — 1243702
+- [x] 3.2 Join helper tests cover invalid token, disabled invite, already-member join, and successful join mapping where practical. — 1243702
+- [x] 3.3 `npm run test:unit` passes. — 1243702
+- [x] 3.4 `npm run lint` passes. — 1243702
+- [x] 3.5 `npm run build` passes. — 1243702
 
 #### Manual
 
-- [x] 3.6 Signed-out invitee opening a valid invite link is sent to sign-in with the invite return preserved.
-- [x] 3.7 After sign-in, invitee lands back on the join confirmation page.
-- [x] 3.8 New invitee can switch to sign-up with the invite return preserved and still reach the join confirmation path after account creation or email confirmation.
-- [x] 3.9 Signed-in invitee sees a confirmation action and joins only after pressing it.
-- [x] 3.10 Invalid or disabled invite link shows a neutral error page and does not reveal household-only data.
-- [x] 3.11 Successful join redirects to `/dashboard`.
+- [x] 3.6 Signed-out invitee opening a valid invite link is sent to sign-in with the invite return preserved. — 1243702
+- [x] 3.7 After sign-in, invitee lands back on the join confirmation page. — 1243702
+- [x] 3.8 New invitee can switch to sign-up with the invite return preserved and still reach the join confirmation path after account creation or email confirmation. — 1243702
+- [x] 3.9 Signed-in invitee sees a confirmation action and joins only after pressing it. — 1243702
+- [x] 3.10 Invalid or disabled invite link shows a neutral error page and does not reveal household-only data. — 1243702
+- [x] 3.11 Successful join redirects to `/dashboard`. — 1243702
 
 ### Phase 4: Route Guards, Redirects, And Handoff
 
 #### Automated
 
-- [ ] 4.1 Guard/helper tests cover owner allowed, member denied for invite management, missing membership allowed for join confirmation, and existing membership blocked from duplicate join where practical.
-- [ ] 4.2 Anonymous request to `/household/invite` redirects to `/auth/signin`.
-- [ ] 4.3 `npm run test:unit` passes.
-- [ ] 4.4 `npm run lint` passes.
-- [ ] 4.5 `npm run build` passes.
+- [x] 4.1 Guard/helper tests cover owner allowed, member denied for invite management, missing membership allowed for join confirmation, and existing membership blocked from duplicate join where practical.
+- [x] 4.2 Anonymous request to `/household/invite` redirects to `/auth/signin`.
+- [x] 4.3 `npm run test:unit` passes.
+- [x] 4.4 `npm run lint` passes.
+- [x] 4.5 `npm run build` passes.
 
 #### Manual
 
-- [ ] 4.6 Owner can manage invites from the owner route.
-- [ ] 4.7 Member cannot manage invites.
-- [ ] 4.8 User with no household can join from a valid invite.
-- [ ] 4.9 User who already belongs to a household cannot join again through the same or another invite.
-- [ ] 4.10 `/join/<token>` remains usable as a shareable link for signed-out users.
+- [x] 4.6 Owner can manage invites from the owner route.
+- [x] 4.7 Member cannot manage invites.
+- [x] 4.8 User with no household can join from a valid invite.
+- [x] 4.9 User who already belongs to a household cannot join again through the same or another invite.
+- [x] 4.10 `/join/<token>` remains usable as a shareable link for signed-out users.
 
 ### Phase 5: Verification And Documentation
 

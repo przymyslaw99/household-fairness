@@ -28,6 +28,9 @@ This file records the load-bearing names introduced by `foundation-household-dom
 - `createCurrentUserHouseholdSetup(supabase, input)`
 - `joinCurrentUserHouseholdByInvite(supabase, inviteToken)`
 - `getCurrentUserHouseholdMembership(supabase)`
+- `getActiveInviteForHousehold(supabase, householdId)`
+- `createActiveInviteForCurrentOwner(supabase, householdId, token)`
+- `disableActiveInviteForCurrentOwner(supabase, householdId)`
 - `listHouseholdChores(supabase, householdId)`
 - `listActiveRecentCompletions(supabase, householdId, windowStart)`
 - `fetchActiveInviteByToken(supabase, inviteToken)`
@@ -38,7 +41,16 @@ All helpers accept the request-scoped Supabase client created by `src/lib/supaba
 
 - `requireCurrentHouseholdMember(supabase, options)` returns `unauthenticated`, `missing_membership`, `wrong_role`, `allowed`, or `error`.
 - `resolveHouseholdGuard(input)` contains the pure guard decision logic used by tests.
+- `resolveJoinRouteAccess(input)` decides whether invite links should send the visitor to auth, show join confirmation, or redirect an existing member away from duplicate join.
 - `requiredRoles` accepts `owner` and/or `member` when a future route needs role-specific access.
+
+## Invite Routes
+
+- `/household/invite` is the owner-facing invite management route.
+- `/api/household/invite/create` creates or reuses the active invite for the current owner household.
+- `/api/household/invite/disable` disables the active invite for the current owner household.
+- `/join/[token]` preserves auth redirect state, validates the active invite, and shows explicit join confirmation.
+- `/api/household/join` performs the authenticated join write after confirmation.
 
 ## Score Invariants
 

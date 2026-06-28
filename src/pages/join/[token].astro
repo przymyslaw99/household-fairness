@@ -4,10 +4,12 @@ import JoinHouseholdForm from "@/components/household/JoinHouseholdForm";
 import { appendRedirectTarget } from "@/lib/auth/redirects";
 import { isMissingAuthSessionError } from "@/lib/auth/session";
 import { parseInviteToken } from "@/lib/household/invites";
-import { fetchActiveInviteByToken } from "@/lib/household/repository";
+import { resolveJoinRouteAccess } from "@/lib/household/join";
+import { fetchActiveInviteByToken, getCurrentUserHouseholdMembership } from "@/lib/household/repository";
 import { createClient } from "@/lib/supabase";
 import Layout from "@/layouts/Layout.astro";
 
+const DASHBOARD_ROUTE = "/dashboard";
 const SIGN_IN_ROUTE = "/auth/signin";
 
 const parsedToken = parseInviteToken(Astro.params.token ?? null);
@@ -37,13 +39,28 @@ if (inviteIsValid) {
     } else if (!user) {
       redirectPath = appendRedirectTarget(SIGN_IN_ROUTE, redirectTarget);
     } else {
-      const inviteResult = await fetchActiveInviteByToken(supabase, parsedToken.data);
+      const membershipResult = await getCurrentUserHouseholdMembership(supabase);
 
-      if (inviteResult.error) {
-        pageError ??= "We could not load that invite right now.";
-      } else if (!inviteResult.data) {
-        inviteToken = null;
-        inviteIsValid = false;
+      if (membershipResult.error) {
+        pageError ??= "We could not verify your household access right now.";
+      } else {
+        const access = resolveJoinRouteAccess({
+          isAuthenticated: true,
+          membership: membershipResult.data,
+        });
+
+        if (access === "redirect_to_dashboard") {
+          redirectPath = DASHBOARD_ROUTE;
+        } else {
+          const inviteResult = await fetchActiveInviteByToken(supabase, parsedToken.data);
+
+          if (inviteResult.error) {
+            pageError ??= "We could not load that invite right now.";
+          } else if (!inviteResult.data) {
+            inviteToken = null;
+            inviteIsValid = false;
+          }
+        }
       }
     }
   }
