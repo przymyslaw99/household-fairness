@@ -504,14 +504,14 @@ S-02 should prefer existing F-01 tables and functions. Add a migration only if t
 
 #### Automated
 
-- [x] 5.1 `context/changes/invite-lifecycle-and-join/verification.md` exists and lists all commands run.
-- [x] 5.2 `npm run test:unit` passes.
-- [x] 5.3 `npm run lint` passes.
-- [x] 5.4 `npm run build` passes.
-- [x] 5.5 If migrations changed, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
+- [x] 5.1 `context/changes/invite-lifecycle-and-join/verification.md` exists and lists all commands run. — 00da056
+- [x] 5.2 `npm run test:unit` passes. — 00da056
+- [x] 5.3 `npm run lint` passes. — 00da056
+- [x] 5.4 `npm run build` passes. — 00da056
+- [x] 5.5 If migrations changed, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass. — 00da056
 
 #### Manual
 
-- [x] 5.6 Confirm S-02 delivers only invite link creation/reuse, invite disabling, preserved auth redirect, and confirmed join.
-- [x] 5.7 Confirm S-03 can rely on at least two household members after a successful join.
-- [x] 5.8 Confirm no member-removal, completion, or dashboard-score behavior was added accidentally.
+- [x] 5.6 Confirm S-02 delivers only invite link creation/reuse, invite disabling, preserved auth redirect, and confirmed join. — 00da056
+- [x] 5.7 Confirm S-03 can rely on at least two household members after a successful join. — 00da056
+- [x] 5.8 Confirm no member-removal, completion, or dashboard-score behavior was added accidentally. — 00da056
