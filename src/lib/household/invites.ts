@@ -58,6 +58,13 @@ export function parseInviteToken(input: FormDataEntryValue | string | null | und
 }
 
 export function mapInviteRepositoryError(message: string): InviteLifecycleError {
+  if (message === "Invite is invalid") {
+    return {
+      code: INVITE_ERROR_CODES.invalidToken,
+      message: "Invite link is invalid.",
+    };
+  }
+
   if (message === "Invite is disabled") {
     return {
       code: INVITE_ERROR_CODES.disabledInvite,

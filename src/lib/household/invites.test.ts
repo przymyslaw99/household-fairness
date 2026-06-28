@@ -64,6 +64,11 @@ describe("parseInviteToken", () => {
 
 describe("mapInviteRepositoryError", () => {
   it("maps owner, membership, and disabled-link failures to stable invite errors", () => {
+    expect(mapInviteRepositoryError("Invite is invalid")).toEqual({
+      code: INVITE_ERROR_CODES.invalidToken,
+      message: "Invite link is invalid.",
+    });
+
     expect(mapInviteRepositoryError("Only household owners can manage invites")).toEqual({
       code: INVITE_ERROR_CODES.wrongRole,
       message: "Only the household owner can manage invite links.",

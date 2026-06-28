@@ -1,8 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import AuthMessageCard from "@/components/auth/AuthMessageCard.astro";
+import { appendRedirectTarget, sanitizeLocalRedirectTarget } from "@/lib/auth/redirects";
 
 const isAutoConfirmed = import.meta.env.DEV;
+const redirectTarget = sanitizeLocalRedirectTarget(Astro.url.searchParams.get("redirectTo"));
+const signInHref = appendRedirectTarget("/auth/signin", redirectTarget);
 
 const content = isAutoConfirmed
   ? {
@@ -25,7 +28,7 @@ const content = isAutoConfirmed
       emoji={content.emoji}
       heading={content.heading}
       description={content.description}
-      href="/auth/signin"
+      href={signInHref}
       linkText={content.linkText}
     />
   </div>

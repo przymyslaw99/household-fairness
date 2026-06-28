@@ -1,0 +1,77 @@
+---
+import AuthCard from "@/components/auth/AuthCard.astro";
+import JoinHouseholdForm from "@/components/household/JoinHouseholdForm";
+import { appendRedirectTarget } from "@/lib/auth/redirects";
+import { isMissingAuthSessionError } from "@/lib/auth/session";
+import { parseInviteToken } from "@/lib/household/invites";
+import { fetchActiveInviteByToken } from "@/lib/household/repository";
+import { createClient } from "@/lib/supabase";
+import Layout from "@/layouts/Layout.astro";
+
+const SIGN_IN_ROUTE = "/auth/signin";
+
+const parsedToken = parseInviteToken(Astro.params.token ?? null);
+const redirectTarget = parsedToken.data ? `/join/${parsedToken.data}` : null;
+const serverError = Astro.url.searchParams.get("error");
+
+let inviteToken: string | null = parsedToken.data;
+let inviteIsValid = parsedToken.error === null;
+let pageError = serverError;
+let redirectPath: string | null = null;
+
+if (inviteIsValid) {
+  const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+  if (!supabase) {
+    pageError ??= "Supabase is not configured.";
+  } else {
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (isMissingAuthSessionError(userError?.message)) {
+      redirectPath = appendRedirectTarget(SIGN_IN_ROUTE, redirectTarget);
+    } else if (userError) {
+      pageError ??= "We could not verify your session right now.";
+    } else if (!user) {
+      redirectPath = appendRedirectTarget(SIGN_IN_ROUTE, redirectTarget);
+    } else {
+      const inviteResult = await fetchActiveInviteByToken(supabase, parsedToken.data);
+
+      if (inviteResult.error) {
+        pageError ??= "We could not load that invite right now.";
+      } else if (!inviteResult.data) {
+        inviteToken = null;
+        inviteIsValid = false;
+      }
+    }
+  }
+}
+---
+
+<Layout title="Join household">
+  {
+    redirectPath ? (
+      <>
+        <meta http-equiv="refresh" content={`0;url=${redirectPath}`} />
+        <AuthCard title="Redirecting to sign in" class="max-w-lg">
+          <p class="text-center text-sm text-blue-100/70">
+            This invite needs an authenticated account. If you are not redirected automatically, continue to{" "}
+            <a class="font-medium text-white underline underline-offset-4" href={redirectPath}>
+              sign in
+            </a>
+            .
+          </p>
+        </AuthCard>
+      </>
+    ) : (
+      <AuthCard title="Join household" class="max-w-lg">
+        <p class="mb-6 text-center text-sm text-blue-100/70">
+          Review this invite and confirm explicitly before your membership is created.
+        </p>
+        <JoinHouseholdForm token={inviteToken} isInviteValid={inviteIsValid} serverError={pageError} />
+      </AuthCard>
+    )
+  }
+</Layout>

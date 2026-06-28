@@ -2,16 +2,19 @@
 import AuthCard from "@/components/auth/AuthCard.astro";
 import AuthFooterPrompt from "@/components/auth/AuthFooterPrompt.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
+import { appendRedirectTarget, sanitizeLocalRedirectTarget } from "@/lib/auth/redirects";
 import Layout from "@/layouts/Layout.astro";
 
 const error = Astro.url.searchParams.get("error");
+const redirectTarget = sanitizeLocalRedirectTarget(Astro.url.searchParams.get("redirectTo"));
+const signInHref = appendRedirectTarget("/auth/signin", redirectTarget);
 ---
 
 <Layout title="Sign up">
   <AuthCard title="Sign up">
-    <SignUpForm serverError={error} client:load />
+    <SignUpForm serverError={error} redirectTarget={redirectTarget} client:load />
     <Fragment slot="footer">
-      <AuthFooterPrompt prompt="Already have an account?" href="/auth/signin" linkText="Sign in" />
+      <AuthFooterPrompt prompt="Already have an account?" href={signInHref} linkText="Sign in" />
     </Fragment>
   </AuthCard>
 </Layout>

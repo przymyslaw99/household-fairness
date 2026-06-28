@@ -451,36 +451,36 @@ S-02 should prefer existing F-01 tables and functions. Add a migration only if t
 
 #### Automated
 
-- [x] 2.1 Owner invite helper tests cover create-or-reuse behavior, disable behavior, invalid token rejection, and non-owner denial where testable.
-- [x] 2.2 `npm run test:unit` passes.
-- [x] 2.3 `npm run lint` passes.
-- [x] 2.4 `npm run build` passes.
+- [x] 2.1 Owner invite helper tests cover create-or-reuse behavior, disable behavior, invalid token rejection, and non-owner denial where testable. — 4587bc0
+- [x] 2.2 `npm run test:unit` passes. — 4587bc0
+- [x] 2.3 `npm run lint` passes. — 4587bc0
+- [x] 2.4 `npm run build` passes. — 4587bc0
 
 #### Manual
 
-- [x] 2.5 Authenticated owner opens `/household/invite`, sees no active link before creation, clicks create, and sees a copyable link.
-- [x] 2.6 Reloading the invite page does not create a second active invite.
-- [x] 2.7 Owner disables the active link and the page no longer presents it as usable.
-- [x] 2.8 A non-owner household member cannot create or disable household invites.
+- [x] 2.5 Authenticated owner opens `/household/invite`, sees no active link before creation, clicks create, and sees a copyable link. — 4587bc0
+- [x] 2.6 Reloading the invite page does not create a second active invite. — 4587bc0
+- [x] 2.7 Owner disables the active link and the page no longer presents it as usable. — 4587bc0
+- [x] 2.8 A non-owner household member cannot create or disable household invites. — 4587bc0
 
 ### Phase 3: Invite Join Route And Auth Preservation
 
 #### Automated
 
-- [ ] 3.1 Redirect-target validation tests reject external URLs and allow only safe local paths across sign-in and sign-up flows.
-- [ ] 3.2 Join helper tests cover invalid token, disabled invite, already-member join, and successful join mapping where practical.
-- [ ] 3.3 `npm run test:unit` passes.
-- [ ] 3.4 `npm run lint` passes.
-- [ ] 3.5 `npm run build` passes.
+- [x] 3.1 Redirect-target validation tests reject external URLs and allow only safe local paths across sign-in and sign-up flows.
+- [x] 3.2 Join helper tests cover invalid token, disabled invite, already-member join, and successful join mapping where practical.
+- [x] 3.3 `npm run test:unit` passes.
+- [x] 3.4 `npm run lint` passes.
+- [x] 3.5 `npm run build` passes.
 
 #### Manual
 
-- [ ] 3.6 Signed-out invitee opening a valid invite link is sent to sign-in with the invite return preserved.
-- [ ] 3.7 After sign-in, invitee lands back on the join confirmation page.
-- [ ] 3.8 New invitee can switch to sign-up with the invite return preserved and still reach the join confirmation path after account creation or email confirmation.
-- [ ] 3.9 Signed-in invitee sees a confirmation action and joins only after pressing it.
-- [ ] 3.10 Invalid or disabled invite link shows a neutral error page and does not reveal household-only data.
-- [ ] 3.11 Successful join redirects to `/dashboard`.
+- [x] 3.6 Signed-out invitee opening a valid invite link is sent to sign-in with the invite return preserved.
+- [x] 3.7 After sign-in, invitee lands back on the join confirmation page.
+- [x] 3.8 New invitee can switch to sign-up with the invite return preserved and still reach the join confirmation path after account creation or email confirmation.
+- [x] 3.9 Signed-in invitee sees a confirmation action and joins only after pressing it.
+- [x] 3.10 Invalid or disabled invite link shows a neutral error page and does not reveal household-only data.
+- [x] 3.11 Successful join redirects to `/dashboard`.
 
 ### Phase 4: Route Guards, Redirects, And Handoff
 
