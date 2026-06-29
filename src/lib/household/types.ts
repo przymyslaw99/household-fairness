@@ -77,6 +77,18 @@ export interface FairnessScoreResult {
   members: FairnessScoreMember[];
 }
 
+export interface DashboardScoreMember extends FairnessScoreMember {
+  member_id: Uuid;
+  role: HouseholdRole;
+}
+
+export interface DashboardScoreResult {
+  window_start: IsoTimestamp;
+  window_end: IsoTimestamp;
+  total_points: number;
+  members: DashboardScoreMember[];
+}
+
 export interface HouseholdSetupRpcChore extends DbRecord {
   name: string;
   weight: number;

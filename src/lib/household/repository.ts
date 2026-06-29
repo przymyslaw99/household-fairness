@@ -89,6 +89,19 @@ export async function listHouseholdChores(
   return toRepositoryResult(data ?? [], error);
 }
 
+export async function listHouseholdMembers(
+  supabase: HouseholdSupabaseClient,
+  householdId: Uuid,
+): Promise<RepositoryResult<HouseholdMember[]>> {
+  const { data, error } = await supabase
+    .from("household_members")
+    .select("*")
+    .eq("household_id", householdId)
+    .order("created_at", { ascending: true });
+
+  return toRepositoryResult(data ?? [], error);
+}
+
 export async function listActiveRecentCompletions(
   supabase: HouseholdSupabaseClient,
   householdId: Uuid,

@@ -5,6 +5,7 @@ import {
   disableActiveInviteForCurrentOwner,
   getActiveInviteForHousehold,
   type HouseholdSupabaseClient,
+  listHouseholdMembers,
   undoCurrentUserChoreCompletion,
 } from "./repository";
 import { HOUSEHOLD_ROLES, type HouseholdInvite, type HouseholdMember } from "./types";
@@ -43,6 +44,28 @@ describe("getActiveInviteForHousehold", () => {
     expect(eq).toHaveBeenCalledWith("household_id", INVITE.household_id);
     expect(is).toHaveBeenCalledWith("disabled_at", null);
     expect(result).toEqual({ data: INVITE, error: null });
+  });
+});
+
+describe("listHouseholdMembers", () => {
+  it("returns household members in stable creation order for the requested household", async () => {
+    const ownerMembership = {
+      ...MEMBERSHIP,
+      id: "00000000-0000-4000-8000-000000000041",
+      role: HOUSEHOLD_ROLES.owner,
+    };
+    const order = vi.fn().mockResolvedValue({ data: [ownerMembership, MEMBERSHIP], error: null });
+    const eq = vi.fn().mockReturnValue({ order });
+    const select = vi.fn().mockReturnValue({ eq });
+    const from = vi.fn().mockReturnValue({ select });
+    const supabase = { from } as unknown as HouseholdSupabaseClient;
+
+    const result = await listHouseholdMembers(supabase, MEMBERSHIP.household_id);
+
+    expect(from).toHaveBeenCalledWith("household_members");
+    expect(eq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
+    expect(order).toHaveBeenCalledWith("created_at", { ascending: true });
+    expect(result).toEqual({ data: [ownerMembership, MEMBERSHIP], error: null });
   });
 });
 
