@@ -1,27 +1,198 @@
 ---
+import { AlertTriangle, CheckCircle2, CircleOff, Home, Link2 } from "lucide-react";
+import CompletionHistory from "@/components/household/CompletionHistory.astro";
+import ChoreCompletionPanel from "@/components/household/ChoreCompletionPanel.astro";
+import Topbar from "@/components/Topbar.astro";
+import { requireCurrentHouseholdMember } from "@/lib/household/guards";
+import { listActiveRecentCompletions, listHouseholdChores } from "@/lib/household/repository";
+import type { ActiveCompletionWithChore, Chore } from "@/lib/household/types";
+import { SCORE_WINDOW_DAYS, SCORE_WINDOW_MS } from "@/lib/household/types";
+import { createClient } from "@/lib/supabase";
 import Layout from "@/layouts/Layout.astro";
 
 const { user } = Astro.locals;
+
+function getDashboardNotice(value: string | null): string | null {
+  if (value === "completed") {
+    return "Chore completion recorded.";
+  }
+
+  if (value === "undone") {
+    return "Completion removed from active history.";
+  }
+
+  return value;
+}
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const error = Astro.url.searchParams.get("error");
+const notice = getDashboardNotice(Astro.url.searchParams.get("notice"));
+const windowStart = new Date(Date.now() - SCORE_WINDOW_MS);
+const windowLabel = `${SCORE_WINDOW_DAYS}-day window`;
+
+let pageError = error;
+let guardStatus: "allowed" | "missing_membership" | "error" | "unauthenticated" = "unauthenticated";
+let chores: Chore[] = [];
+let completions: ActiveCompletionWithChore[] = [];
+
+if (!supabase) {
+  guardStatus = "error";
+  pageError ??= "Supabase is not configured.";
+} else {
+  const guard = await requireCurrentHouseholdMember(supabase);
+  guardStatus = guard.status;
+
+  if (guard.status === "error") {
+    pageError ??= "We could not load your household access right now.";
+  } else if (guard.status === "allowed") {
+    const [choresResult, completionsResult] = await Promise.all([
+      listHouseholdChores(supabase, guard.member.household_id),
+      listActiveRecentCompletions(supabase, guard.member.household_id, windowStart),
+    ]);
+
+    if (choresResult.error) {
+      pageError ??= "We could not load your household chores right now.";
+    } else {
+      chores = choresResult.data;
+    }
+
+    if (completionsResult.error) {
+      pageError ??= "We could not load recent completion history right now.";
+    } else {
+      completions = completionsResult.data;
+    }
+  }
+}
 ---
 
 <Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Dashboard
-      </h1>
-      <p class="text-blue-100/80">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
-      </p>
-      <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+  <div class="bg-cosmic relative min-h-screen overflow-hidden">
+    <div
+      class="pointer-events-none absolute top-0 left-1/2 h-[320px] w-[320px] -translate-x-1/2 rounded-full bg-cyan-400/10 blur-[130px]"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute top-36 -left-20 h-[280px] w-[280px] rounded-full bg-emerald-400/10 blur-[120px]"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute right-0 bottom-12 h-[260px] w-[260px] rounded-full bg-blue-500/10 blur-[120px]"
+    >
+    </div>
+
+    <div class="relative z-10 p-4 sm:p-8">
+      <Topbar />
+
+      <main class="mx-auto max-w-6xl px-4 pb-20">
+        <section
+          class="rounded-[2rem] border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/25 backdrop-blur-xl sm:p-8"
         >
-          Sign out
-        </button>
-      </form>
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div class="max-w-3xl">
+              <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Member dashboard</p>
+              <h1 class="mt-3 text-4xl font-semibold text-white sm:text-5xl">Record chores without losing context</h1>
+              <p class="mt-4 text-base leading-7 text-blue-100/68">
+                Welcome back{user?.email ? `, ${user.email}` : ""}.
+                <br />
+                This view shows the current chore weights and the active completion history for the {windowLabel}
+                that will feed the shared fairness dashboard later.
+              </p>
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-slate-950/30 px-5 py-4">
+              <p class="text-xs font-semibold tracking-[0.22em] text-blue-100/45 uppercase">Current scope</p>
+              <p class="mt-2 text-sm leading-6 text-blue-100/68">
+                Chore visibility, self-completion, own undo, and recent active history only.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {
+          notice ? (
+            <div class="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+              <p>{notice}</p>
+            </div>
+          ) : null
+        }
+
+        {
+          pageError ? (
+            <div class="mt-6 flex items-start gap-3 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+              <p>{pageError}</p>
+            </div>
+          ) : null
+        }
+
+        {
+          guardStatus === "missing_membership" ? (
+            <section class="mt-6 rounded-[2rem] border border-white/10 bg-white/6 p-8 text-center shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+              <div class="mx-auto flex size-14 items-center justify-center rounded-full border border-white/10 bg-white/6 text-blue-50">
+                <Home className="size-6" />
+              </div>
+              <h2 class="mt-5 text-2xl font-semibold text-white">Join or create a household first</h2>
+              <p class="mx-auto mt-3 max-w-2xl text-sm leading-7 text-blue-100/68">
+                Your account is signed in, but it is not attached to any household yet. The completion loop starts only
+                after the owner creates a household and you join it through the invite flow.
+              </p>
+              <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <a
+                  href="/setup/household"
+                  class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-medium text-slate-950 transition hover:bg-blue-100"
+                >
+                  Review household setup
+                </a>
+                <a
+                  href="/household/invite"
+                  class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                >
+                  <Link2 className="size-4" />
+                  Check invite status
+                </a>
+              </div>
+            </section>
+          ) : guardStatus !== "allowed" ? (
+            <section class="mt-6 rounded-[2rem] border border-white/10 bg-white/6 p-8 text-center shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+              <div class="mx-auto flex size-14 items-center justify-center rounded-full border border-white/10 bg-white/6 text-blue-50">
+                <CircleOff className="size-6" />
+              </div>
+              <h2 class="mt-5 text-2xl font-semibold text-white">Dashboard unavailable right now</h2>
+              <p class="mx-auto mt-3 max-w-2xl text-sm leading-7 text-blue-100/68">
+                We could not confirm your household access for this request. Refresh the page or sign in again if the
+                problem continues.
+              </p>
+            </section>
+          ) : chores.length === 0 ? (
+            <section class="mt-6 rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+              <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                <div class="max-w-2xl">
+                  <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Blocked state</p>
+                  <h2 class="mt-3 text-2xl font-semibold text-white">No chores are available yet</h2>
+                  <p class="mt-3 text-sm leading-7 text-blue-100/68">
+                    There is nothing to complete because this household does not have any chore weights yet.
+                    <br />
+                    The household owner needs to add chores before members can record contributions here.
+                  </p>
+                </div>
+
+                <a
+                  href="/household/invite"
+                  class="inline-flex items-center justify-center rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                >
+                  Return to invite tools
+                </a>
+              </div>
+            </section>
+          ) : (
+            <div class="mt-6 grid gap-6">
+              <ChoreCompletionPanel chores={chores} />
+              <CompletionHistory completions={completions} currentUserId={user?.id ?? null} />
+            </div>
+          )
+        }
+      </main>
     </div>
   </div>
 </Layout>

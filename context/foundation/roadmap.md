@@ -104,7 +104,7 @@ Unknowns: `None`
 
 Risk: If the invite flow is broadened into full member-administration or multi-household support, it will slow the path to the first shared score without improving the core validation.
 
-Status: `proposed`
+Status: `implemented`
 
 ### S-03: Member completion loop
 

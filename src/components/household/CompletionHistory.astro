@@ -1,0 +1,101 @@
+---
+import { History, RotateCcw } from "lucide-react";
+import type { ActiveCompletionWithChore, Uuid } from "@/lib/household/types";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  completions: ActiveCompletionWithChore[];
+  currentUserId: Uuid | null;
+}
+
+const { completions, currentUserId } = Astro.props;
+
+const timestampFormatter = new Intl.DateTimeFormat("en", {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
+function formatCompletedBy(userId: Uuid): string {
+  if (userId === currentUserId) {
+    return "You";
+  }
+
+  return `Member ${userId.slice(0, 8)}`;
+}
+---
+
+<section class="rounded-3xl border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Recent history</p>
+      <h2 class="mt-2 text-2xl font-semibold text-white">Active contributions in the last 14 days</h2>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-blue-100/68">
+        This list is the current contribution history that feeds the later fairness dashboard.
+      </p>
+    </div>
+
+    <div
+      class:list={cn(
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium",
+        "border-white/10 bg-white/5 text-blue-50",
+      )}
+    >
+      <History className="size-4" />
+      {completions.length} active {completions.length === 1 ? "entry" : "entries"}
+    </div>
+  </div>
+
+  {
+    completions.length === 0 ? (
+      <div class="mt-6 rounded-2xl border border-dashed border-white/12 bg-slate-950/20 px-5 py-8 text-center">
+        <p class="text-base font-medium text-white">No active completions yet</p>
+        <p class="mt-2 text-sm leading-6 text-blue-100/62">
+          Complete a chore to start the shared two-week history. Undone items disappear from this active list.
+        </p>
+      </div>
+    ) : (
+      <div class="mt-6 space-y-3">
+        {completions.map((completion) => {
+          const isOwnCompletion = completion.completed_by === currentUserId;
+          const chore = completion.chores;
+
+          return (
+            <article class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div class="min-w-0">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <p class="text-base font-semibold text-white">{chore?.name ?? "Unavailable chore"}</p>
+                    <span class="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-blue-50">
+                      {chore?.weight ?? "?"} pt
+                    </span>
+                  </div>
+                  <p class="mt-2 text-sm leading-6 text-blue-100/62">
+                    {formatCompletedBy(completion.completed_by)} completed this on{" "}
+                    {timestampFormatter.format(new Date(completion.completed_at))}.
+                  </p>
+                </div>
+
+                {isOwnCompletion ? (
+                  <form method="POST" action="/api/household/completions/undo" class="lg:min-w-44">
+                    <input type="hidden" name="completion_id" value={completion.id} />
+                    <button
+                      type="submit"
+                      class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/8 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/14"
+                    >
+                      <RotateCcw className="size-4" />
+                      Undo
+                    </button>
+                  </form>
+                ) : (
+                  <div class="rounded-xl border border-white/8 bg-white/4 px-4 py-3 text-sm text-blue-100/50">
+                    Only the member who recorded this can undo it.
+                  </div>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    )
+  }
+</section>

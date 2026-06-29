@@ -1,0 +1,67 @@
+---
+import { CheckCircle2, ListTodo } from "lucide-react";
+import type { Chore } from "@/lib/household/types";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  chores: Chore[];
+}
+
+const { chores } = Astro.props;
+---
+
+<section class="rounded-3xl border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Complete a chore</p>
+      <h2 class="mt-2 text-2xl font-semibold text-white">Visible chore weights</h2>
+      <p class="mt-2 max-w-2xl text-sm leading-6 text-blue-100/68">
+        Record only what you completed.
+        <br />
+        Each submission adds one active completion to the shared two-week history.
+      </p>
+    </div>
+
+    <div
+      class:list={cn(
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium",
+        "border-emerald-300/20 bg-emerald-300/10 text-emerald-50",
+      )}
+    >
+      <CheckCircle2 className="size-4" />
+      {chores.length}
+      {chores.length === 1 ? "chore ready" : "chores ready"}
+    </div>
+  </div>
+
+  <div class="mt-6 grid gap-4 md:grid-cols-2">
+    {
+      chores.map((chore) => (
+        <article class="rounded-2xl border border-white/10 bg-slate-950/25 p-4">
+          <div class="flex items-start justify-between gap-4">
+            <div class="min-w-0">
+              <p class="truncate text-base font-semibold text-white">{chore.name}</p>
+              <p class="mt-1 text-sm text-blue-100/62">
+                Worth {chore.weight} {chore.weight === 1 ? "point" : "points"}.
+              </p>
+            </div>
+            <div class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm font-medium text-blue-50">
+              {chore.weight} pt
+            </div>
+          </div>
+
+          <form method="POST" action="/api/household/completions" class="mt-4">
+            <input type="hidden" name="chore_id" value={chore.id} />
+            <button
+              type="submit"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-medium text-slate-950 transition hover:bg-blue-100"
+            >
+              <ListTodo className="size-4" />
+              Mark complete
+            </button>
+          </form>
+        </article>
+      ))
+    }
+  </div>
+</section>

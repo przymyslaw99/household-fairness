@@ -27,6 +27,8 @@ This file records the load-bearing names introduced by `foundation-household-dom
 - `createCurrentUserHousehold(supabase, householdName)`
 - `createCurrentUserHouseholdSetup(supabase, input)`
 - `joinCurrentUserHouseholdByInvite(supabase, inviteToken)`
+- `createCurrentUserChoreCompletion(supabase, input)`
+- `undoCurrentUserChoreCompletion(supabase, input)`
 - `getCurrentUserHouseholdMembership(supabase)`
 - `getActiveInviteForHousehold(supabase, householdId)`
 - `createActiveInviteForCurrentOwner(supabase, householdId, token)`
@@ -52,6 +54,12 @@ All helpers accept the request-scoped Supabase client created by `src/lib/supaba
 - `/join/[token]` preserves auth redirect state, validates the active invite, and shows explicit join confirmation.
 - `/api/household/join` performs the authenticated join write after confirmation.
 
+## Completion Routes
+
+- `/dashboard` shows household chore weights and the active 14-day completion history for members.
+- `/api/household/completions` records a completion for the current authenticated household member.
+- `/api/household/completions/undo` soft-undoes the current member's own active completion.
+
 ## Score Invariants
 
 - Fairness Score uses a rolling 14-day window.
@@ -74,5 +82,5 @@ All helpers accept the request-scoped Supabase client created by `src/lib/supaba
 
 - `S-01 Household setup`: use `create_household_with_initial_chores`, `createCurrentUserHouseholdSetup`, `getCurrentUserHouseholdMembership`, `households`, `household_members`, and `chores`.
 - `S-02 Invite joining`: use `join_household_with_invite`, `joinCurrentUserHouseholdByInvite`, `fetchActiveInviteByToken`, and `household_invites`.
-- `S-03 Chore completion`: use `chores`, `chore_completions`, `getCurrentUserHouseholdMembership`, `listHouseholdChores`, and `requireCurrentHouseholdMember`.
+- `S-03 Chore completion`: use `chores`, `chore_completions`, `createCurrentUserChoreCompletion`, `undoCurrentUserChoreCompletion`, `getCurrentUserHouseholdMembership`, `listHouseholdChores`, `listActiveRecentCompletions`, `requireCurrentHouseholdMember`, `/dashboard`, `/api/household/completions`, and `/api/household/completions/undo`.
 - `S-04 Dashboard scoring`: use `listActiveRecentCompletions`, `calculateFairnessScore`, `SCORE_WINDOW_DAYS`, and the score invariants above.

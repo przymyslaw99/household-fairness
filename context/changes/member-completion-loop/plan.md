@@ -387,32 +387,32 @@ No schema migration is expected for S-03 because F-01 already created `chore_com
 
 #### Automated
 
-- [x] 3.1 Completion API routes compile through `npm run build`.
-- [x] 3.2 `npm run test:unit` passes.
-- [x] 3.3 `npm run lint` passes.
-- [x] 3.4 `npm run build` passes.
+- [x] 3.1 Completion API routes compile through `npm run build`. — 84d2ade
+- [x] 3.2 `npm run test:unit` passes. — 84d2ade
+- [x] 3.3 `npm run lint` passes. — 84d2ade
+- [x] 3.4 `npm run build` passes. — 84d2ade
 
 #### Manual
 
-- [x] 3.5 Marking a chore complete redirects back to `/dashboard` and the new completion appears in recent history.
-- [x] 3.6 Undoing an own active completion redirects back to `/dashboard` and removes that completion from active history.
-- [x] 3.7 Direct POST with a missing `chore_id` or `completion_id` redirects back with a clear error.
-- [x] 3.8 Direct POST attempting to undo another member's completion fails and does not mutate the row.
-- [x] 3.9 API route behavior confirms form parsing, redirects, query-string errors, and household guard handling outside pgTAP.
+- [x] 3.5 Marking a chore complete redirects back to `/dashboard` and the new completion appears in recent history. — 84d2ade
+- [x] 3.6 Undoing an own active completion redirects back to `/dashboard` and removes that completion from active history. — 84d2ade
+- [x] 3.7 Direct POST with a missing `chore_id` or `completion_id` redirects back with a clear error. — 84d2ade
+- [x] 3.8 Direct POST attempting to undo another member's completion fails and does not mutate the row. — 84d2ade
+- [x] 3.9 API route behavior confirms form parsing, redirects, query-string errors, and household guard handling outside pgTAP. — 84d2ade
 
 ### Phase 4: Verification And Handoff
 
 #### Automated
 
-- [ ] 4.1 `supabase/tests/household_domain_contract.sql` passes with `npx supabase db test supabase/tests/household_domain_contract.sql`.
-- [ ] 4.2 Local migrations apply with `npx supabase db reset`.
-- [ ] 4.3 `context/changes/member-completion-loop/verification.md` exists and lists the commands run.
-- [ ] 4.4 `npm run test:unit` passes.
-- [ ] 4.5 `npm run lint` passes.
-- [ ] 4.6 `npm run build` passes.
+- [x] 4.1 `supabase/tests/household_domain_contract.sql` passes with `npx supabase db test supabase/tests/household_domain_contract.sql`.
+- [x] 4.2 Local migrations apply with `npx supabase db reset`.
+- [x] 4.3 `context/changes/member-completion-loop/verification.md` exists and lists the commands run.
+- [x] 4.4 `npm run test:unit` passes.
+- [x] 4.5 `npm run lint` passes.
+- [x] 4.6 `npm run build` passes.
 
 #### Manual
 
-- [ ] 4.7 Confirm S-03 delivers only chore visibility, self-completion, own undo, and recent active history.
-- [ ] 4.8 Confirm the dashboard does not present Fairness Score percentages or rank members.
-- [ ] 4.9 Confirm S-04 can reuse the S-03 history and repository surface for the future shared fairness dashboard.
+- [x] 4.7 Confirm S-03 delivers only chore visibility, self-completion, own undo, and recent active history.
+- [x] 4.8 Confirm the dashboard does not present Fairness Score percentages or rank members.
+- [x] 4.9 Confirm S-04 can reuse the S-03 history and repository surface for the future shared fairness dashboard.
