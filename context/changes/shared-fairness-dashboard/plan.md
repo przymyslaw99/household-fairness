@@ -392,31 +392,31 @@ No schema migration is expected. The current tables already store household memb
 
 #### Automated
 
-- [x] 3.1 History component changes compile through `npm run build`.
-- [x] 3.2 `npm run test:unit` passes.
-- [x] 3.3 `npm run lint` passes.
-- [x] 3.4 `npm run build` passes.
+- [x] 3.1 History component changes compile through `npm run build`. — 6436f65
+- [x] 3.2 `npm run test:unit` passes. — 6436f65
+- [x] 3.3 `npm run lint` passes. — 6436f65
+- [x] 3.4 `npm run build` passes. — 6436f65
 
 #### Manual
 
-- [x] 3.5 Recent history shows the full active 14-day completion set returned by the dashboard query.
-- [x] 3.6 Raw point totals in the score summary can be traced back to visible history items.
-- [x] 3.7 Undoing an own active completion redirects back to `/dashboard`, removes the row, and updates the score.
-- [x] 3.8 History copy does not imply an all-time archive or include completions outside the score window.
+- [x] 3.5 Recent history shows the full active 14-day completion set returned by the dashboard query. — 6436f65
+- [x] 3.6 Raw point totals in the score summary can be traced back to visible history items. — 6436f65
+- [x] 3.7 Undoing an own active completion redirects back to `/dashboard`, removes the row, and updates the score. — 6436f65
+- [x] 3.8 History copy does not imply an all-time archive or include completions outside the score window. — 6436f65
 
 ### Phase 4: Verification And Handoff
 
 #### Automated
 
-- [ ] 4.1 `context/changes/shared-fairness-dashboard/verification.md` exists and lists the commands run.
-- [ ] 4.2 `npm run test:unit` passes.
-- [ ] 4.3 `npm run lint` passes.
-- [ ] 4.4 `npm run build` passes.
-- [ ] 4.5 If database contracts change, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
+- [x] 4.1 `context/changes/shared-fairness-dashboard/verification.md` exists and lists the commands run.
+- [x] 4.2 `npm run test:unit` passes.
+- [x] 4.3 `npm run lint` passes.
+- [x] 4.4 `npm run build` passes.
+- [x] 4.5 If database contracts change, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
 
 #### Manual
 
-- [ ] 4.6 Confirm S-04 delivers percentage share, raw points, visible 14-day window, and recent chore explanation.
-- [ ] 4.7 Confirm the dashboard preserves S-03 completion/undo behavior.
-- [ ] 4.8 Confirm member identity uses the explicit identifier fallback and does not add profile scope.
-- [ ] 4.9 Confirm the dashboard does not rank members or present the score as an objective fairness verdict.
+- [x] 4.6 Confirm S-04 delivers percentage share, raw points, visible 14-day window, and recent chore explanation.
+- [x] 4.7 Confirm the dashboard preserves S-03 completion/undo behavior.
+- [x] 4.8 Confirm member identity uses the explicit identifier fallback and does not add profile scope.
+- [x] 4.9 Confirm the dashboard does not rank members or present the score as an objective fairness verdict.

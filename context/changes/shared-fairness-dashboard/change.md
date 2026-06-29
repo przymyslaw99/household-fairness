@@ -3,7 +3,7 @@ change_id: shared-fairness-dashboard
 title: Shared fairness dashboard
 status: implementing
 created: 2026-06-19
-updated: 2026-06-29
+updated: 2026-06-30
 archived_at: null
 ---
 

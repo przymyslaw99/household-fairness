@@ -83,4 +83,4 @@ All helpers accept the request-scoped Supabase client created by `src/lib/supaba
 - `S-01 Household setup`: use `create_household_with_initial_chores`, `createCurrentUserHouseholdSetup`, `getCurrentUserHouseholdMembership`, `households`, `household_members`, and `chores`.
 - `S-02 Invite joining`: use `join_household_with_invite`, `joinCurrentUserHouseholdByInvite`, `fetchActiveInviteByToken`, and `household_invites`.
 - `S-03 Chore completion`: use `chores`, `chore_completions`, `createCurrentUserChoreCompletion`, `undoCurrentUserChoreCompletion`, `getCurrentUserHouseholdMembership`, `listHouseholdChores`, `listActiveRecentCompletions`, `requireCurrentHouseholdMember`, `/dashboard`, `/api/household/completions`, and `/api/household/completions/undo`.
-- `S-04 Dashboard scoring`: use `listActiveRecentCompletions`, `calculateFairnessScore`, `SCORE_WINDOW_DAYS`, and the score invariants above.
+- `S-04 Dashboard scoring`: use `listHouseholdMembers`, `buildDashboardScore`, `FairnessSummary.astro`, `listActiveRecentCompletions`, `calculateFairnessScore`, `SCORE_WINDOW_DAYS`, and the score invariants above.
