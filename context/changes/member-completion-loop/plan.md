@@ -404,15 +404,15 @@ No schema migration is expected for S-03 because F-01 already created `chore_com
 
 #### Automated
 
-- [x] 4.1 `supabase/tests/household_domain_contract.sql` passes with `npx supabase db test supabase/tests/household_domain_contract.sql`.
-- [x] 4.2 Local migrations apply with `npx supabase db reset`.
-- [x] 4.3 `context/changes/member-completion-loop/verification.md` exists and lists the commands run.
-- [x] 4.4 `npm run test:unit` passes.
-- [x] 4.5 `npm run lint` passes.
-- [x] 4.6 `npm run build` passes.
+- [x] 4.1 `supabase/tests/household_domain_contract.sql` passes with `npx supabase db test supabase/tests/household_domain_contract.sql`. — f2c6160
+- [x] 4.2 Local migrations apply with `npx supabase db reset`. — f2c6160
+- [x] 4.3 `context/changes/member-completion-loop/verification.md` exists and lists the commands run. — f2c6160
+- [x] 4.4 `npm run test:unit` passes. — f2c6160
+- [x] 4.5 `npm run lint` passes. — f2c6160
+- [x] 4.6 `npm run build` passes. — f2c6160
 
 #### Manual
 
-- [x] 4.7 Confirm S-03 delivers only chore visibility, self-completion, own undo, and recent active history.
-- [x] 4.8 Confirm the dashboard does not present Fairness Score percentages or rank members.
-- [x] 4.9 Confirm S-04 can reuse the S-03 history and repository surface for the future shared fairness dashboard.
+- [x] 4.7 Confirm S-03 delivers only chore visibility, self-completion, own undo, and recent active history. — f2c6160
+- [x] 4.8 Confirm the dashboard does not present Fairness Score percentages or rank members. — f2c6160
+- [x] 4.9 Confirm S-04 can reuse the S-03 history and repository surface for the future shared fairness dashboard. — f2c6160
