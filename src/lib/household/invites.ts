@@ -5,6 +5,7 @@ export const INVITE_TOKEN_MIN_LENGTH = 16;
 export const INVITE_ERROR_CODES = {
   invalidToken: "invalid_token",
   disabledInvite: "disabled_invite",
+  unavailableInvite: "unavailable_invite",
   alreadyMember: "already_member",
   wrongRole: "wrong_role",
   repositoryFailure: "repository_failure",
@@ -58,10 +59,17 @@ export function parseInviteToken(input: FormDataEntryValue | string | null | und
 }
 
 export function mapInviteRepositoryError(message: string): InviteLifecycleError {
-  if (message === "Invite is invalid" || message === "Invite is invalid or disabled") {
+  if (message === "Invite is invalid") {
     return {
       code: INVITE_ERROR_CODES.invalidToken,
       message: "Invite link is invalid.",
+    };
+  }
+
+  if (message === "Invite is invalid or disabled") {
+    return {
+      code: INVITE_ERROR_CODES.unavailableInvite,
+      message: "Invite link is invalid or no longer active.",
     };
   }
 

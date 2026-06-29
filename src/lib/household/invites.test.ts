@@ -70,8 +70,8 @@ describe("mapInviteRepositoryError", () => {
     });
 
     expect(mapInviteRepositoryError("Invite is invalid or disabled")).toEqual({
-      code: INVITE_ERROR_CODES.invalidToken,
-      message: "Invite link is invalid.",
+      code: INVITE_ERROR_CODES.unavailableInvite,
+      message: "Invite link is invalid or no longer active.",
     });
 
     expect(mapInviteRepositoryError("Only household owners can manage invites")).toEqual({
