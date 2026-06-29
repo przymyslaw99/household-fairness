@@ -355,50 +355,50 @@ No schema migration is expected for S-03 because F-01 already created `chore_com
 
 #### Automated
 
-- [x] 1.1 Completion form helper tests pass with `npm run test:unit`.
-- [x] 1.2 Existing score and guard tests continue to pass with `npm run test:unit`.
-- [x] 1.3 Repository helper types compile through `npm run build`.
-- [x] 1.4 `npm run lint` passes.
-- [x] 1.5 `npm run build` passes.
+- [x] 1.1 Completion form helper tests pass with `npm run test:unit`. — 2e8167d
+- [x] 1.2 Existing score and guard tests continue to pass with `npm run test:unit`. — 2e8167d
+- [x] 1.3 Repository helper types compile through `npm run build`. — 2e8167d
+- [x] 1.4 `npm run lint` passes. — 2e8167d
+- [x] 1.5 `npm run build` passes. — 2e8167d
 
 #### Manual
 
-- [x] 1.6 Review repository helpers for server-derived household/user fields.
-- [x] 1.7 Confirm Phase 1 adds no dashboard UI, invite UI, or score dashboard behavior.
+- [x] 1.6 Review repository helpers for server-derived household/user fields. — 2e8167d
+- [x] 1.7 Confirm Phase 1 adds no dashboard UI, invite UI, or score dashboard behavior. — 2e8167d
 
 ### Phase 2: Dashboard Completion UI
 
 #### Automated
 
-- [ ] 2.1 Dashboard and new household components compile through `npm run build`.
-- [ ] 2.2 `npm run test:unit` passes.
-- [ ] 2.3 `npm run lint` passes.
-- [ ] 2.4 `npm run build` passes.
+- [x] 2.1 Dashboard and new household components compile through `npm run build`.
+- [x] 2.2 `npm run test:unit` passes.
+- [x] 2.3 `npm run lint` passes.
+- [x] 2.4 `npm run build` passes.
 
 #### Manual
 
-- [ ] 2.5 Authenticated household member can open `/dashboard` and see chore names plus point weights.
-- [ ] 2.6 A household with no chores shows the owner-focused blocked state.
-- [ ] 2.7 Recent history shows active completions from the rolling 14-day window.
-- [ ] 2.8 Undo controls appear only on the current user's active completions.
-- [ ] 2.9 Completion and undo failures display short query-string error messages on return to `/dashboard`.
+- [x] 2.5 Authenticated household member can open `/dashboard` and see chore names plus point weights.
+- [x] 2.6 A household with no chores shows the owner-focused blocked state.
+- [x] 2.7 Recent history shows active completions from the rolling 14-day window.
+- [x] 2.8 Undo controls appear only on the current user's active completions.
+- [x] 2.9 Completion and undo failures display short query-string error messages on return to `/dashboard`.
 
 ### Phase 3: Completion API Routes
 
 #### Automated
 
-- [ ] 3.1 Completion API routes compile through `npm run build`.
-- [ ] 3.2 `npm run test:unit` passes.
-- [ ] 3.3 `npm run lint` passes.
-- [ ] 3.4 `npm run build` passes.
+- [x] 3.1 Completion API routes compile through `npm run build`.
+- [x] 3.2 `npm run test:unit` passes.
+- [x] 3.3 `npm run lint` passes.
+- [x] 3.4 `npm run build` passes.
 
 #### Manual
 
-- [ ] 3.5 Marking a chore complete redirects back to `/dashboard` and the new completion appears in recent history.
-- [ ] 3.6 Undoing an own active completion redirects back to `/dashboard` and removes that completion from active history.
-- [ ] 3.7 Direct POST with a missing `chore_id` or `completion_id` redirects back with a clear error.
-- [ ] 3.8 Direct POST attempting to undo another member's completion fails and does not mutate the row.
-- [ ] 3.9 API route behavior confirms form parsing, redirects, query-string errors, and household guard handling outside pgTAP.
+- [x] 3.5 Marking a chore complete redirects back to `/dashboard` and the new completion appears in recent history.
+- [x] 3.6 Undoing an own active completion redirects back to `/dashboard` and removes that completion from active history.
+- [x] 3.7 Direct POST with a missing `chore_id` or `completion_id` redirects back with a clear error.
+- [x] 3.8 Direct POST attempting to undo another member's completion fails and does not mutate the row.
+- [x] 3.9 API route behavior confirms form parsing, redirects, query-string errors, and household guard handling outside pgTAP.
 
 ### Phase 4: Verification And Handoff
 

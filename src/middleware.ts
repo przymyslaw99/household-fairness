@@ -3,7 +3,7 @@ import { getCurrentUserHouseholdMembership } from "@/lib/household/repository";
 import { createClient } from "@/lib/supabase";
 
 // Add only real household routes here; F-01 defines contracts without reserving route names.
-const PROTECTED_ROUTES = ["/dashboard", "/setup/household", "/household/invite"];
+const PROTECTED_ROUTES = ["/dashboard", "/setup/household", "/household/invite", "/api/household/completions"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const supabase = createClient(context.request.headers, context.cookies);
