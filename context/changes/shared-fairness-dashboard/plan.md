@@ -375,34 +375,34 @@ No schema migration is expected. The current tables already store household memb
 
 #### Automated
 
-- [x] 2.1 Dashboard and `FairnessSummary.astro` compile through `npm run build`.
-- [x] 2.2 `npm run test:unit` passes.
-- [x] 2.3 `npm run lint` passes.
-- [x] 2.4 `npm run build` passes.
+- [x] 2.1 Dashboard and `FairnessSummary.astro` compile through `npm run build`. — b3b76ab
+- [x] 2.2 `npm run test:unit` passes. — b3b76ab
+- [x] 2.3 `npm run lint` passes. — b3b76ab
+- [x] 2.4 `npm run build` passes. — b3b76ab
 
 #### Manual
 
-- [x] 2.5 Authenticated household member opens `/dashboard` and sees the score summary before completion controls/history.
-- [x] 2.6 Every household member appears with equal visual weight, exact percentage, and raw points.
-- [x] 2.7 A household with no active 14-day completions shows all members at `0%` plus an explanatory empty state.
-- [x] 2.8 The visible copy explains that the score is limited to recorded chores in the rolling 14-day window.
-- [x] 2.9 The UI does not rank, highlight a winner, or present the score as an objective verdict.
+- [x] 2.5 Authenticated household member opens `/dashboard` and sees the score summary before completion controls/history. — b3b76ab
+- [x] 2.6 Every household member appears with equal visual weight, exact percentage, and raw points. — b3b76ab
+- [x] 2.7 A household with no active 14-day completions shows all members at `0%` plus an explanatory empty state. — b3b76ab
+- [x] 2.8 The visible copy explains that the score is limited to recorded chores in the rolling 14-day window. — b3b76ab
+- [x] 2.9 The UI does not rank, highlight a winner, or present the score as an objective verdict. — b3b76ab
 
 ### Phase 3: History Explanation Integration
 
 #### Automated
 
-- [ ] 3.1 History component changes compile through `npm run build`.
-- [ ] 3.2 `npm run test:unit` passes.
-- [ ] 3.3 `npm run lint` passes.
-- [ ] 3.4 `npm run build` passes.
+- [x] 3.1 History component changes compile through `npm run build`.
+- [x] 3.2 `npm run test:unit` passes.
+- [x] 3.3 `npm run lint` passes.
+- [x] 3.4 `npm run build` passes.
 
 #### Manual
 
-- [ ] 3.5 Recent history shows the full active 14-day completion set returned by the dashboard query.
-- [ ] 3.6 Raw point totals in the score summary can be traced back to visible history items.
-- [ ] 3.7 Undoing an own active completion redirects back to `/dashboard`, removes the row, and updates the score.
-- [ ] 3.8 History copy does not imply an all-time archive or include completions outside the score window.
+- [x] 3.5 Recent history shows the full active 14-day completion set returned by the dashboard query.
+- [x] 3.6 Raw point totals in the score summary can be traced back to visible history items.
+- [x] 3.7 Undoing an own active completion redirects back to `/dashboard`, removes the row, and updates the score.
+- [x] 3.8 History copy does not imply an all-time archive or include completions outside the score window.
 
 ### Phase 4: Verification And Handoff
 

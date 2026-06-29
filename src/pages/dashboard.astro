@@ -197,9 +197,9 @@ if (!supabase) {
                       <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Blocked state</p>
                       <h2 class="mt-3 text-2xl font-semibold text-white">No chores are available yet</h2>
                       <p class="mt-3 text-sm leading-7 text-blue-100/68">
-                        There is nothing to complete because this household does not have any chore weights yet.
+                        There is nothing new to complete because this household does not have any chore weights yet.
                         <br />
-                        The household owner needs to add chores before members can record contributions here.
+                        The household owner needs to add chores before members can record more contributions here.
                       </p>
                     </div>
 
@@ -212,11 +212,10 @@ if (!supabase) {
                   </div>
                 </section>
               ) : (
-                <>
-                  <ChoreCompletionPanel chores={chores} />
-                  <CompletionHistory completions={completions} currentUserId={user?.id ?? null} />
-                </>
+                <ChoreCompletionPanel chores={chores} />
               )}
+
+              <CompletionHistory completions={completions} currentUserId={user?.id ?? null} />
             </div>
           )
         }
