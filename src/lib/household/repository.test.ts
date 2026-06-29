@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  createCurrentUserChoreCompletion,
   createActiveInviteForCurrentOwner,
   disableActiveInviteForCurrentOwner,
   getActiveInviteForHousehold,
   type HouseholdSupabaseClient,
+  undoCurrentUserChoreCompletion,
 } from "./repository";
-import type { HouseholdInvite } from "./types";
+import { HOUSEHOLD_ROLES, type HouseholdInvite, type HouseholdMember } from "./types";
 
 const INVITE: HouseholdInvite = {
   id: "00000000-0000-4000-8000-000000000010",
@@ -15,6 +17,15 @@ const INVITE: HouseholdInvite = {
   created_at: "2026-06-27T10:00:00.000Z",
   disabled_at: null,
 };
+const MEMBERSHIP: HouseholdMember = {
+  id: "00000000-0000-4000-8000-000000000040",
+  household_id: "00000000-0000-4000-8000-000000000020",
+  user_id: "00000000-0000-4000-8000-000000000030",
+  role: HOUSEHOLD_ROLES.member,
+  created_at: "2026-06-27T10:00:00.000Z",
+};
+const COMPLETION_ID = "00000000-0000-4000-8000-000000000050";
+const CHORE_ID = "00000000-0000-4000-8000-000000000060";
 
 describe("getActiveInviteForHousehold", () => {
   it("returns the current active invite when one exists", async () => {
@@ -79,5 +90,103 @@ describe("disableActiveInviteForCurrentOwner", () => {
       target_household_id: INVITE.household_id,
     });
     expect(result).toEqual({ data: disabledInvite, error: null });
+  });
+});
+
+describe("createCurrentUserChoreCompletion", () => {
+  it("derives the current user and household from the server context before inserting", async () => {
+    const single = vi.fn().mockResolvedValue({ data: { id: COMPLETION_ID }, error: null });
+    const selectCompletion = vi.fn().mockReturnValue({ single });
+    const insert = vi.fn().mockReturnValue({ select: selectCompletion });
+    const membershipMaybeSingle = vi.fn().mockResolvedValue({ data: MEMBERSHIP, error: null });
+    const membershipEq = vi.fn().mockReturnValue({ maybeSingle: membershipMaybeSingle });
+    const membershipSelect = vi.fn().mockReturnValue({ eq: membershipEq });
+    const from = vi
+      .fn()
+      .mockImplementationOnce(() => ({ select: membershipSelect }))
+      .mockImplementationOnce(() => ({ insert }));
+    const getUser = vi.fn().mockResolvedValue({
+      data: { user: { id: MEMBERSHIP.user_id } },
+      error: null,
+    });
+    const supabase = { auth: { getUser }, from } as unknown as HouseholdSupabaseClient;
+
+    const result = await createCurrentUserChoreCompletion(supabase, { choreId: CHORE_ID });
+
+    expect(getUser).toHaveBeenCalled();
+    expect(from).toHaveBeenNthCalledWith(1, "household_members");
+    expect(from).toHaveBeenNthCalledWith(2, "chore_completions");
+    expect(insert).toHaveBeenCalledWith({
+      household_id: MEMBERSHIP.household_id,
+      chore_id: CHORE_ID,
+      completed_by: MEMBERSHIP.user_id,
+    });
+    expect(result).toEqual({ data: COMPLETION_ID, error: null });
+  });
+});
+
+describe("undoCurrentUserChoreCompletion", () => {
+  it("scopes undo updates to the current user's active completion in their household", async () => {
+    const maybeSingleUndo = vi.fn().mockResolvedValue({ data: { id: COMPLETION_ID }, error: null });
+    const selectUndo = vi.fn().mockReturnValue({ maybeSingle: maybeSingleUndo });
+    const isUndo = vi.fn().mockReturnValue({ select: selectUndo });
+    const completedByEq = vi.fn().mockReturnValue({ is: isUndo });
+    const householdEq = vi.fn().mockReturnValue({ eq: completedByEq });
+    const idEq = vi.fn().mockReturnValue({ eq: householdEq });
+    const update = vi.fn().mockReturnValue({ eq: idEq });
+    const membershipMaybeSingle = vi.fn().mockResolvedValue({ data: MEMBERSHIP, error: null });
+    const membershipEq = vi.fn().mockReturnValue({ maybeSingle: membershipMaybeSingle });
+    const membershipSelect = vi.fn().mockReturnValue({ eq: membershipEq });
+    const from = vi
+      .fn()
+      .mockImplementationOnce(() => ({ select: membershipSelect }))
+      .mockImplementationOnce(() => ({ update }));
+    const getUser = vi.fn().mockResolvedValue({
+      data: { user: { id: MEMBERSHIP.user_id } },
+      error: null,
+    });
+    const supabase = { auth: { getUser }, from } as unknown as HouseholdSupabaseClient;
+
+    const result = await undoCurrentUserChoreCompletion(supabase, { completionId: COMPLETION_ID });
+
+    expect(update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        undone_by: MEMBERSHIP.user_id,
+      }),
+    );
+    expect(idEq).toHaveBeenCalledWith("id", COMPLETION_ID);
+    expect(householdEq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
+    expect(completedByEq).toHaveBeenCalledWith("completed_by", MEMBERSHIP.user_id);
+    expect(isUndo).toHaveBeenCalledWith("undone_at", null);
+    expect(result).toEqual({ data: COMPLETION_ID, error: null });
+  });
+
+  it("returns a repository error when no active owned completion matched the undo request", async () => {
+    const maybeSingleUndo = vi.fn().mockResolvedValue({ data: null, error: null });
+    const selectUndo = vi.fn().mockReturnValue({ maybeSingle: maybeSingleUndo });
+    const isUndo = vi.fn().mockReturnValue({ select: selectUndo });
+    const completedByEq = vi.fn().mockReturnValue({ is: isUndo });
+    const householdEq = vi.fn().mockReturnValue({ eq: completedByEq });
+    const idEq = vi.fn().mockReturnValue({ eq: householdEq });
+    const update = vi.fn().mockReturnValue({ eq: idEq });
+    const membershipMaybeSingle = vi.fn().mockResolvedValue({ data: MEMBERSHIP, error: null });
+    const membershipEq = vi.fn().mockReturnValue({ maybeSingle: membershipMaybeSingle });
+    const membershipSelect = vi.fn().mockReturnValue({ eq: membershipEq });
+    const from = vi
+      .fn()
+      .mockImplementationOnce(() => ({ select: membershipSelect }))
+      .mockImplementationOnce(() => ({ update }));
+    const getUser = vi.fn().mockResolvedValue({
+      data: { user: { id: MEMBERSHIP.user_id } },
+      error: null,
+    });
+    const supabase = { auth: { getUser }, from } as unknown as HouseholdSupabaseClient;
+
+    const result = await undoCurrentUserChoreCompletion(supabase, { completionId: COMPLETION_ID });
+
+    expect(result).toEqual({
+      data: null,
+      error: { message: "Completion not found." },
+    });
   });
 });

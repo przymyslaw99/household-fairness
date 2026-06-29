@@ -105,6 +105,63 @@ export async function listActiveRecentCompletions(
   return toRepositoryResult(data ?? [], error);
 }
 
+export async function createCurrentUserChoreCompletion(
+  supabase: HouseholdSupabaseClient,
+  input: { choreId: Uuid },
+): Promise<RepositoryResult<Uuid>> {
+  const contextResult = await resolveCurrentUserHouseholdContext(supabase);
+
+  if (contextResult.error) {
+    return { data: null, error: contextResult.error };
+  }
+
+  const { data, error } = await supabase
+    .from("chore_completions")
+    .insert({
+      household_id: contextResult.data.householdId,
+      chore_id: input.choreId,
+      completed_by: contextResult.data.userId,
+    })
+    .select("id")
+    .single();
+
+  return toRequiredRepositoryResult(data?.id ?? null, error);
+}
+
+export async function undoCurrentUserChoreCompletion(
+  supabase: HouseholdSupabaseClient,
+  input: { completionId: Uuid },
+): Promise<RepositoryResult<Uuid>> {
+  const contextResult = await resolveCurrentUserHouseholdContext(supabase);
+
+  if (contextResult.error) {
+    return { data: null, error: contextResult.error };
+  }
+
+  const { data, error } = await supabase
+    .from("chore_completions")
+    .update({
+      undone_at: new Date().toISOString(),
+      undone_by: contextResult.data.userId,
+    })
+    .eq("id", input.completionId)
+    .eq("household_id", contextResult.data.householdId)
+    .eq("completed_by", contextResult.data.userId)
+    .is("undone_at", null)
+    .select("id")
+    .maybeSingle();
+
+  if (error) {
+    return { data: null, error: { message: error.message } };
+  }
+
+  if (!data?.id) {
+    return { data: null, error: { message: "Completion not found." } };
+  }
+
+  return { data: data.id, error: null };
+}
+
 export async function fetchActiveInviteByToken(
   supabase: HouseholdSupabaseClient,
   inviteToken: string,
@@ -159,6 +216,41 @@ export async function disableActiveInviteForCurrentOwner(
     .maybeSingle();
 
   return toRepositoryResult(data, error);
+}
+
+async function resolveCurrentUserHouseholdContext(
+  supabase: HouseholdSupabaseClient,
+): Promise<RepositoryResult<{ userId: Uuid; householdId: Uuid }>> {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    return { data: null, error: { message: userError.message } };
+  }
+
+  if (!user) {
+    return { data: null, error: { message: "You must be signed in." } };
+  }
+
+  const membershipResult = await getCurrentUserHouseholdMembership(supabase);
+
+  if (membershipResult.error) {
+    return { data: null, error: membershipResult.error };
+  }
+
+  if (!membershipResult.data) {
+    return { data: null, error: { message: "Household membership is required." } };
+  }
+
+  return {
+    data: {
+      userId: user.id,
+      householdId: membershipResult.data.household_id,
+    },
+    error: null,
+  };
 }
 
 function toRepositoryResult<T>(
