@@ -1,35 +1,35 @@
-# A smieci wyniosles? - MVP
+# Did You Take Out the Trash? - MVP
 
-## Glowny problem
+## Main Problem
 
-W gospodarstwach domowych czesto dochodzi do konfliktow zwiazanych z podzialem obowiazkow. Domownicy maja rozne wyobrazenie o tym, kto wykonuje wiecej pracy, a brak danych powoduje poczucie niesprawiedliwosci i nieporozumienia.
+Households often experience conflicts related to the division of chores. Household members have different perceptions of who does more work, and the lack of data leads to a sense of unfairness and misunderstandings.
 
-## Najmniejszy zestaw funkcjonalnosci
+## Minimum Feature Set
 
-- Rejestracja i logowanie uzytkownikow.
-- Tworzenie gospodarstwa domowego.
-- Dodawanie domownikow do gospodarstwa.
-- Tworzenie obowiazkow domowych wraz z okresleniem ich wagi punktowej.
-- Oznaczanie wykonania obowiazku przez konkretnego domownika.
-- Dashboard pokazujacy wykonane obowiazki i aktualny Fairness Score dla kazdego domownika.
-- Historia wykonanych obowiazkow.
+- User registration and login.
+- Creating a household.
+- Adding household members.
+- Creating chores with assigned point weights.
+- Marking a chore as completed by a specific household member.
+- A dashboard showing completed chores and the current Fairness Score for each household member.
+- A history of completed chores.
 
-## Co nie wchodzi w zakres MVP
+## What Is Out of Scope for the MVP
 
-- Integracja z kalendarzami.
-- Powiadomienia push i e-mail.
-- Automatyczne przypisywanie obowiazkow przez AI.
-- Aplikacja mobilna.
-- Gamifikacja (odznaki, poziomy, rankingi).
-- Obsluga wielu gospodarstw przez jednego uzytkownika.
-- Zaawansowane statystyki i wykresy historyczne.
-- Integracje z asystentami glosowymi.
+- Calendar integrations.
+- Push and email notifications.
+- Automatic chore assignment powered by AI.
+- A mobile application.
+- Gamification (badges, levels, rankings).
+- Support for multiple households per user.
+- Advanced statistics and historical charts.
+- Integrations with voice assistants.
 
-## Kryteria sukcesu
+## Success Criteria
 
-- Uzytkownik moze utworzyc gospodarstwo domowe i dodac co najmniej dwoch domownikow.
-- Uzytkownik moze utworzyc obowiazek, przypisac mu wage punktowa i oznaczyc jego wykonanie.
-- System poprawnie wylicza Fairness Score na podstawie wykonanych obowiazkow.
-- Dashboard pokazuje aktualny udzial kazdego domownika w obowiazkach domowych.
-- Test E2E potwierdza glowny przeplyw: utworzenie gospodarstwa -> dodanie obowiazku -> oznaczenie wykonania -> aktualizacja Fairness Score.
-- Aplikacja jest wdrozona i posiada dzialajacy pipeline CI/CD.
+- A user can create a household and add at least two household members.
+- A user can create a chore, assign it a point weight, and mark it as completed.
+- The system correctly calculates the Fairness Score based on completed chores.
+- The dashboard shows each household member's current share of household chores.
+- An E2E test confirms the main flow: create a household -> add a chore -> mark it as completed -> update the Fairness Score.
+- The application is deployed and has a working CI/CD pipeline.
