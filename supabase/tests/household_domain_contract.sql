@@ -1,6 +1,6 @@
 begin;
 
-select plan(30);
+select plan(31);
 
 insert into auth.users (id, email, role, aud, email_confirmed_at, created_at, updated_at)
 values
@@ -201,6 +201,33 @@ select lives_ok(
     where owner_id = '00000000-0000-4000-8000-000000000001'
   $$,
   'owner can create chores'
+);
+
+select set_config(
+  'test.take_out_trash_chore_id',
+  (
+    select id::text
+    from public.chores
+    where household_id = current_setting('test.phase_three_household_id')::uuid
+      and name = 'Take out trash'
+  ),
+  true
+);
+
+select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000003', true);
+
+select throws_ok(
+  $$
+    insert into public.chore_completions (household_id, chore_id, completed_by)
+    values (
+      current_setting('test.phase_three_household_id')::uuid,
+      current_setting('test.take_out_trash_chore_id')::uuid,
+      '00000000-0000-4000-8000-000000000003'
+    )
+  $$,
+  '42501',
+  'new row violates row-level security policy for table "chore_completions"',
+  'outsider cannot create completion in another household'
 );
 
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000002', true);

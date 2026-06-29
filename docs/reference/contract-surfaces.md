@@ -1,6 +1,6 @@
-# F-01 Household Contract Surfaces
+# Household Contract Surfaces
 
-This file records the load-bearing names introduced by `foundation-household-domain-contract`. Keep it short and update it only when the contract itself changes.
+This file records load-bearing household domain names introduced across implemented roadmap slices. Keep it short and update it only when a slice adds or changes a reusable contract surface.
 
 ## Tables
 
