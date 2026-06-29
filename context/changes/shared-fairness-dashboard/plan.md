@@ -408,15 +408,15 @@ No schema migration is expected. The current tables already store household memb
 
 #### Automated
 
-- [x] 4.1 `context/changes/shared-fairness-dashboard/verification.md` exists and lists the commands run.
-- [x] 4.2 `npm run test:unit` passes.
-- [x] 4.3 `npm run lint` passes.
-- [x] 4.4 `npm run build` passes.
-- [x] 4.5 If database contracts change, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass.
+- [x] 4.1 `context/changes/shared-fairness-dashboard/verification.md` exists and lists the commands run. — 0853c60
+- [x] 4.2 `npm run test:unit` passes. — 0853c60
+- [x] 4.3 `npm run lint` passes. — 0853c60
+- [x] 4.4 `npm run build` passes. — 0853c60
+- [x] 4.5 If database contracts change, `npx supabase db reset` and `npx supabase db test supabase/tests/household_domain_contract.sql` pass. — 0853c60
 
 #### Manual
 
-- [x] 4.6 Confirm S-04 delivers percentage share, raw points, visible 14-day window, and recent chore explanation.
-- [x] 4.7 Confirm the dashboard preserves S-03 completion/undo behavior.
-- [x] 4.8 Confirm member identity uses the explicit identifier fallback and does not add profile scope.
-- [x] 4.9 Confirm the dashboard does not rank members or present the score as an objective fairness verdict.
+- [x] 4.6 Confirm S-04 delivers percentage share, raw points, visible 14-day window, and recent chore explanation. — 0853c60
+- [x] 4.7 Confirm the dashboard preserves S-03 completion/undo behavior. — 0853c60
+- [x] 4.8 Confirm member identity uses the explicit identifier fallback and does not add profile scope. — 0853c60
+- [x] 4.9 Confirm the dashboard does not rank members or present the score as an objective fairness verdict. — 0853c60
