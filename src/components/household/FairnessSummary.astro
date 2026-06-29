@@ -1,0 +1,100 @@
+---
+import { Scale, Users } from "lucide-react";
+import type { DashboardScoreResult, DashboardScoreMember } from "@/lib/household/types";
+import { SCORE_WINDOW_DAYS } from "@/lib/household/types";
+import { cn } from "@/lib/utils";
+
+interface Props {
+  score: DashboardScoreResult;
+}
+
+const { score } = Astro.props;
+
+const dateFormatter = new Intl.DateTimeFormat("en", {
+  dateStyle: "medium",
+});
+
+function formatPercentage(value: number): string {
+  const rounded = Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
+  return `${rounded}%`;
+}
+
+function formatMemberIdentifier(member: DashboardScoreMember): string {
+  return `Member ${member.user_id.slice(0, 8)}`;
+}
+---
+
+<section class="rounded-3xl border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+    <div class="max-w-3xl">
+      <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Shared fairness score</p>
+      <h2 class="mt-2 text-2xl font-semibold text-white">Current contribution view for the household</h2>
+      <p class="mt-2 text-sm leading-6 text-blue-100/68">
+        This score reflects recorded, active chore completions in the rolling {SCORE_WINDOW_DAYS}-day window. 
+        <br />
+        It is a shared indicator for discussion, not an objective verdict about fairness.
+      </p>
+    </div>
+
+    <div
+      class:list={cn(
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium",
+        "border-white/10 bg-white/5 text-blue-50",
+      )}
+    >
+      <Scale className="size-4" />
+      {score.total_points} total {score.total_points === 1 ? "point" : "points"}
+    </div>
+  </div>
+
+  <div class="mt-5 rounded-2xl border border-white/10 bg-slate-950/25 px-4 py-4">
+    <div class="flex flex-col gap-3 text-sm text-blue-100/68 lg:flex-row lg:items-center lg:justify-between">
+      <p>
+        Score window: {dateFormatter.format(new Date(score.window_start))} to{" "}
+        {dateFormatter.format(new Date(score.window_end))}
+      </p>
+      <p>Every household member stays visible even when they have zero active points in this window.</p>
+    </div>
+  </div>
+
+  {
+    score.total_points === 0 ? (
+      <div class="mt-5 rounded-2xl border border-dashed border-white/12 bg-slate-950/20 px-5 py-4 text-sm leading-6 text-blue-100/68">
+        No recorded active completions are contributing points right now. Everyone remains at 0% and 0 points until
+        chores are completed inside the current rolling window.
+      </div>
+    ) : null
+  }
+
+  <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    {
+      score.members.map((member) => {
+        return (
+          <article class="rounded-2xl border border-white/10 bg-slate-950/25 p-5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-white">{formatMemberIdentifier(member)}</p>
+                <p class="mt-1 text-xs tracking-[0.22em] text-blue-100/45 uppercase">{member.role}</p>
+              </div>
+
+              <div class="flex size-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-blue-50">
+                <Users className="size-4" />
+              </div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-2 gap-3">
+              <div class="rounded-2xl border border-white/8 bg-white/5 px-4 py-3">
+                <p class="text-xs font-semibold tracking-[0.2em] text-blue-100/45 uppercase">Share</p>
+                <p class="mt-2 text-2xl font-semibold text-white">{formatPercentage(member.percentage)}</p>
+              </div>
+              <div class="rounded-2xl border border-white/8 bg-white/5 px-4 py-3">
+                <p class="text-xs font-semibold tracking-[0.2em] text-blue-100/45 uppercase">Raw points</p>
+                <p class="mt-2 text-2xl font-semibold text-white">{member.raw_points}</p>
+              </div>
+            </div>
+          </article>
+        );
+      })
+    }
+  </div>
+</section>

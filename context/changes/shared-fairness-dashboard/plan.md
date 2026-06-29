@@ -360,33 +360,33 @@ No schema migration is expected. The current tables already store household memb
 
 #### Automated
 
-- [x] 1.1 Dashboard score helper tests pass with `npm run test:unit`.
-- [x] 1.2 Existing score and guard tests continue to pass with `npm run test:unit`.
-- [x] 1.3 Repository helper types compile through `npm run build`.
-- [x] 1.4 `npm run lint` passes.
-- [x] 1.5 `npm run build` passes.
+- [x] 1.1 Dashboard score helper tests pass with `npm run test:unit`. — 6c1f891
+- [x] 1.2 Existing score and guard tests continue to pass with `npm run test:unit`. — 6c1f891
+- [x] 1.3 Repository helper types compile through `npm run build`. — 6c1f891
+- [x] 1.4 `npm run lint` passes. — 6c1f891
+- [x] 1.5 `npm run build` passes. — 6c1f891
 
 #### Manual
 
-- [x] 1.6 Review the data contract and confirm members with no active completions are still represented.
-- [x] 1.7 Confirm Phase 1 adds no dashboard UI, profile schema, realtime, or ranking behavior.
+- [x] 1.6 Review the data contract and confirm members with no active completions are still represented. — 6c1f891
+- [x] 1.7 Confirm Phase 1 adds no dashboard UI, profile schema, realtime, or ranking behavior. — 6c1f891
 
 ### Phase 2: Neutral Fairness Summary UI
 
 #### Automated
 
-- [ ] 2.1 Dashboard and `FairnessSummary.astro` compile through `npm run build`.
-- [ ] 2.2 `npm run test:unit` passes.
-- [ ] 2.3 `npm run lint` passes.
-- [ ] 2.4 `npm run build` passes.
+- [x] 2.1 Dashboard and `FairnessSummary.astro` compile through `npm run build`.
+- [x] 2.2 `npm run test:unit` passes.
+- [x] 2.3 `npm run lint` passes.
+- [x] 2.4 `npm run build` passes.
 
 #### Manual
 
-- [ ] 2.5 Authenticated household member opens `/dashboard` and sees the score summary before completion controls/history.
-- [ ] 2.6 Every household member appears with equal visual weight, exact percentage, and raw points.
-- [ ] 2.7 A household with no active 14-day completions shows all members at `0%` plus an explanatory empty state.
-- [ ] 2.8 The visible copy explains that the score is limited to recorded chores in the rolling 14-day window.
-- [ ] 2.9 The UI does not rank, highlight a winner, or present the score as an objective verdict.
+- [x] 2.5 Authenticated household member opens `/dashboard` and sees the score summary before completion controls/history.
+- [x] 2.6 Every household member appears with equal visual weight, exact percentage, and raw points.
+- [x] 2.7 A household with no active 14-day completions shows all members at `0%` plus an explanatory empty state.
+- [x] 2.8 The visible copy explains that the score is limited to recorded chores in the rolling 14-day window.
+- [x] 2.9 The UI does not rank, highlight a winner, or present the score as an objective verdict.
 
 ### Phase 3: History Explanation Integration
 

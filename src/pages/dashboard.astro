@@ -2,10 +2,12 @@
 import { AlertTriangle, CheckCircle2, CircleOff, Home, Link2 } from "lucide-react";
 import CompletionHistory from "@/components/household/CompletionHistory.astro";
 import ChoreCompletionPanel from "@/components/household/ChoreCompletionPanel.astro";
+import FairnessSummary from "@/components/household/FairnessSummary.astro";
 import Topbar from "@/components/Topbar.astro";
 import { requireCurrentHouseholdMember } from "@/lib/household/guards";
-import { listActiveRecentCompletions, listHouseholdChores } from "@/lib/household/repository";
-import type { ActiveCompletionWithChore, Chore } from "@/lib/household/types";
+import { listActiveRecentCompletions, listHouseholdChores, listHouseholdMembers } from "@/lib/household/repository";
+import { buildDashboardScore } from "@/lib/household/dashboard-score";
+import type { ActiveCompletionWithChore, Chore, DashboardScoreResult, HouseholdMember } from "@/lib/household/types";
 import { SCORE_WINDOW_DAYS, SCORE_WINDOW_MS } from "@/lib/household/types";
 import { createClient } from "@/lib/supabase";
 import Layout from "@/layouts/Layout.astro";
@@ -34,6 +36,9 @@ let pageError = error;
 let guardStatus: "allowed" | "missing_membership" | "error" | "unauthenticated" = "unauthenticated";
 let chores: Chore[] = [];
 let completions: ActiveCompletionWithChore[] = [];
+let members: HouseholdMember[] = [];
+let score: DashboardScoreResult | null = null;
+const now = new Date();
 
 if (!supabase) {
   guardStatus = "error";
@@ -45,9 +50,10 @@ if (!supabase) {
   if (guard.status === "error") {
     pageError ??= "We could not load your household access right now.";
   } else if (guard.status === "allowed") {
-    const [choresResult, completionsResult] = await Promise.all([
+    const [choresResult, completionsResult, membersResult] = await Promise.all([
       listHouseholdChores(supabase, guard.member.household_id),
       listActiveRecentCompletions(supabase, guard.member.household_id, windowStart),
+      listHouseholdMembers(supabase, guard.member.household_id),
     ]);
 
     if (choresResult.error) {
@@ -60,6 +66,22 @@ if (!supabase) {
       pageError ??= "We could not load recent completion history right now.";
     } else {
       completions = completionsResult.data;
+    }
+
+    if (membersResult.error) {
+      pageError ??= "We could not load your household members right now.";
+    } else {
+      members = membersResult.data;
+    }
+
+    if (!pageError) {
+      const scoreResult = buildDashboardScore(members, completions, now);
+
+      if (scoreResult.error) {
+        pageError = "We could not calculate the shared fairness score right now.";
+      } else {
+        score = scoreResult.data;
+      }
     }
   }
 }
@@ -94,15 +116,15 @@ if (!supabase) {
               <p class="mt-4 text-base leading-7 text-blue-100/68">
                 Welcome back{user?.email ? `, ${user.email}` : ""}.
                 <br />
-                This view shows the current chore weights and the active completion history for the {windowLabel}
-                that will feed the shared fairness dashboard later.
+                This view shows the current shared fairness score, the active completion history for the {windowLabel},
+                and the chores your household can record right now.
               </p>
             </div>
 
             <div class="rounded-2xl border border-white/10 bg-slate-950/30 px-5 py-4">
               <p class="text-xs font-semibold tracking-[0.22em] text-blue-100/45 uppercase">Current scope</p>
               <p class="mt-2 text-sm leading-6 text-blue-100/68">
-                Chore visibility, self-completion, own undo, and recent active history only.
+                Shared score visibility, self-completion, own undo, and active two-week history.
               </p>
             </div>
           </div>
@@ -164,31 +186,37 @@ if (!supabase) {
                 problem continues.
               </p>
             </section>
-          ) : chores.length === 0 ? (
-            <section class="mt-6 rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
-              <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div class="max-w-2xl">
-                  <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Blocked state</p>
-                  <h2 class="mt-3 text-2xl font-semibold text-white">No chores are available yet</h2>
-                  <p class="mt-3 text-sm leading-7 text-blue-100/68">
-                    There is nothing to complete because this household does not have any chore weights yet.
-                    <br />
-                    The household owner needs to add chores before members can record contributions here.
-                  </p>
-                </div>
-
-                <a
-                  href="/household/invite"
-                  class="inline-flex items-center justify-center rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
-                >
-                  Return to invite tools
-                </a>
-              </div>
-            </section>
           ) : (
             <div class="mt-6 grid gap-6">
-              <ChoreCompletionPanel chores={chores} />
-              <CompletionHistory completions={completions} currentUserId={user?.id ?? null} />
+              {score ? <FairnessSummary score={score} /> : null}
+
+              {chores.length === 0 ? (
+                <section class="rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                  <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                    <div class="max-w-2xl">
+                      <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Blocked state</p>
+                      <h2 class="mt-3 text-2xl font-semibold text-white">No chores are available yet</h2>
+                      <p class="mt-3 text-sm leading-7 text-blue-100/68">
+                        There is nothing to complete because this household does not have any chore weights yet.
+                        <br />
+                        The household owner needs to add chores before members can record contributions here.
+                      </p>
+                    </div>
+
+                    <a
+                      href="/household/invite"
+                      class="inline-flex items-center justify-center rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                    >
+                      Return to invite tools
+                    </a>
+                  </div>
+                </section>
+              ) : (
+                <>
+                  <ChoreCompletionPanel chores={chores} />
+                  <CompletionHistory completions={completions} currentUserId={user?.id ?? null} />
+                </>
+              )}
             </div>
           )
         }
