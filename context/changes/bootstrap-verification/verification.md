@@ -2,7 +2,7 @@
 bootstrapped_at: 2026-06-13T13:57:36Z
 starter_id: 10x-astro-starter
 starter_name: "10x Astro Starter (Astro + Supabase + Cloudflare)"
-project_name: a-smieci-wyniosles
+project_name: household-fairness
 language_family: js
 package_manager: npm
 cwd_strategy: git-clone
@@ -16,7 +16,7 @@ audit_command: npm audit --json
 ```yaml
 starter_id: 10x-astro-starter
 package_manager: npm
-project_name: a-smieci-wyniosles
+project_name: household-fairness
 hints:
   language_family: js
   team_size: solo

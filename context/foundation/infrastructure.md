@@ -1,5 +1,5 @@
 ---
-project: a-smieci-wyniosles
+project: household-fairness
 researched_at: 2026-06-14
 recommended_platform: Cloudflare Workers
 runner_up: Netlify

@@ -1,7 +1,7 @@
 ---
 starter_id: 10x-astro-starter
 package_manager: npm
-project_name: a-smieci-wyniosles
+project_name: household-fairness
 hints:
   language_family: js
   team_size: solo

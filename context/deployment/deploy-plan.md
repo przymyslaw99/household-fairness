@@ -20,7 +20,7 @@ Current repo state before deploy:
 
 ### Workers target hardening
 
-- Update `wrangler.jsonc` Worker name from `10x-astro-starter` to `a-smieci-wyniosles`.
+- Update `wrangler.jsonc` Worker name from `10x-astro-starter` to `household-fairness`.
 - Keep the existing Worker runtime path: `@astrojs/cloudflare`, `output: "server"`, `npx wrangler deploy`.
 - Do not switch to Pages commands or Pages-specific config.
 
@@ -73,7 +73,7 @@ Current repo state before deploy:
 ## Assumptions
 
 - Source of truth for runtime is **Cloudflare Workers**, not Pages.
-- First release goes to the default Workers URL with slug `a-smieci-wyniosles`.
+- First release goes to the default Workers URL with slug `household-fairness`.
 - CI/CD and custom domain are explicitly out of scope for this pass.
 - Production Supabase credentials will be supplied manually during execution.
 - Cloudflare access will be provided via `CLOUDFLARE_API_TOKEN`.
