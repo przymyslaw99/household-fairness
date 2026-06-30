@@ -1,5 +1,6 @@
 ---
 import AuthCard from "@/components/auth/AuthCard.astro";
+import Topbar from "@/components/Topbar.astro";
 import InviteControls from "@/components/household/InviteControls";
 import { requireCurrentHouseholdMember } from "@/lib/household/guards";
 import { getActiveInviteForHousehold } from "@/lib/household/repository";
@@ -53,30 +54,37 @@ if (!supabase) {
 ---
 
 <Layout title="Manage invite link">
-  <AuthCard title="Invite another household member" class="max-w-2xl">
-    {
-      forbidden ? (
-        <>
-          <p class="mb-4 text-center text-sm text-blue-100/70">
-            Only the household owner can manage invite links for this household.
-          </p>
-          <div class="flex justify-center">
-            <a
-              href={DASHBOARD_ROUTE}
-              class="inline-flex items-center justify-center rounded-md border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
-            >
-              Return to dashboard
-            </a>
-          </div>
-        </>
-      ) : (
-        <>
-          <p class="mb-6 text-center text-sm text-blue-100/70">
-            Create one active invite link, share it when needed, and disable it when you want new joins to stop.
-          </p>
-          <InviteControls activeInviteUrl={activeInviteUrl} notice={notice} serverError={pageError} client:load />
-        </>
-      )
-    }
-  </AuthCard>
+  <div class="bg-cosmic min-h-screen p-4 sm:p-8">
+    <div class="flex min-h-[calc(100vh-2rem)] flex-col sm:min-h-[calc(100vh-4rem)]">
+      <Topbar />
+      <div class="mx-auto flex w-full max-w-5xl flex-1 items-center justify-center py-6">
+        <AuthCard title="Invite another household member" class="w-full max-w-3xl">
+          {
+            forbidden ? (
+              <>
+                <p class="mb-4 text-center text-sm text-blue-100/70">
+                  Only the household owner can manage invite links.
+                </p>
+                <div class="flex justify-center">
+                  <a
+                    href={DASHBOARD_ROUTE}
+                    class="inline-flex items-center justify-center rounded-md border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white transition hover:bg-white/20"
+                  >
+                    Return to dashboard
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <p class="mb-6 text-center text-sm text-blue-100/70">
+                  Create an invite link, share it, and disable it to stop new joins.
+                </p>
+                <InviteControls activeInviteUrl={activeInviteUrl} notice={notice} serverError={pageError} client:load />
+              </>
+            )
+          }
+        </AuthCard>
+      </div>
+    </div>
+  </div>
 </Layout>

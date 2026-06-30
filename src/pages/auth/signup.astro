@@ -2,6 +2,7 @@
 import AuthCard from "@/components/auth/AuthCard.astro";
 import AuthFooterPrompt from "@/components/auth/AuthFooterPrompt.astro";
 import SignUpForm from "@/components/auth/SignUpForm";
+import Topbar from "@/components/Topbar.astro";
 import { appendRedirectTarget, sanitizeLocalRedirectTarget } from "@/lib/auth/redirects";
 import Layout from "@/layouts/Layout.astro";
 
@@ -11,10 +12,17 @@ const signInHref = appendRedirectTarget("/auth/signin", redirectTarget);
 ---
 
 <Layout title="Sign up">
-  <AuthCard title="Sign up">
-    <SignUpForm serverError={error} redirectTarget={redirectTarget} client:load />
-    <Fragment slot="footer">
-      <AuthFooterPrompt prompt="Already have an account?" href={signInHref} linkText="Sign in" />
-    </Fragment>
-  </AuthCard>
+  <div class="bg-cosmic flex min-h-dvh flex-col overflow-hidden p-4 sm:p-8">
+    <Topbar class="mb-2" />
+    <div class="flex flex-1 items-center justify-center">
+      <div class="mx-auto w-full max-w-4xl">
+        <AuthCard title="Sign up">
+          <SignUpForm serverError={error} redirectTarget={redirectTarget} client:load />
+          <Fragment slot="footer">
+            <AuthFooterPrompt prompt="Already have an account?" href={signInHref} linkText="Sign in" />
+          </Fragment>
+        </AuthCard>
+      </div>
+    </div>
+  </div>
 </Layout>

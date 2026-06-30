@@ -1,5 +1,6 @@
 ---
 import AuthCard from "@/components/auth/AuthCard.astro";
+import Topbar from "@/components/Topbar.astro";
 import HouseholdSetupForm from "@/components/household/HouseholdSetupForm";
 import { getCurrentUserHouseholdMembership } from "@/lib/household/repository";
 import { createClient } from "@/lib/supabase";
@@ -10,11 +11,14 @@ const membershipResult = supabase ? await getCurrentUserHouseholdMembership(supa
 const error = membershipResult?.error?.message ?? Astro.url.searchParams.get("error");
 ---
 
-<Layout title="Set up household">
-  <AuthCard title="Create your household" class="max-w-2xl">
-    <p class="mb-6 text-center text-sm text-blue-100/70">
-      Start with one household name and the first chore weights your group will use.
-    </p>
-    <HouseholdSetupForm serverError={error} client:load />
-  </AuthCard>
+<Layout title="Set up a household">
+  <div class="bg-cosmic min-h-screen p-4 sm:p-8">
+    <Topbar />
+    <div class="mx-auto flex min-h-[calc(100vh-10rem)] max-w-4xl items-center">
+      <AuthCard title="Create your household" class="max-w-2xl">
+        <p class="mb-6 text-center text-sm text-blue-100/70">Start with household name and the first chore.</p>
+        <HouseholdSetupForm serverError={error} client:load />
+      </AuthCard>
+    </div>
+  </div>
 </Layout>

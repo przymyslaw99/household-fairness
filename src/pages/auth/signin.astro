@@ -2,19 +2,29 @@
 import AuthCard from "@/components/auth/AuthCard.astro";
 import AuthFooterPrompt from "@/components/auth/AuthFooterPrompt.astro";
 import SignInForm from "@/components/auth/SignInForm";
+import Topbar from "@/components/Topbar.astro";
 import { appendRedirectTarget, sanitizeLocalRedirectTarget } from "@/lib/auth/redirects";
 import Layout from "@/layouts/Layout.astro";
 
 const error = Astro.url.searchParams.get("error");
+const noticeParam = Astro.url.searchParams.get("notice");
 const redirectTarget = sanitizeLocalRedirectTarget(Astro.url.searchParams.get("redirectTo"));
 const signUpHref = appendRedirectTarget("/auth/signup", redirectTarget);
+const notice = noticeParam === "signed-out" ? "You have been signed out successfully." : null;
 ---
 
 <Layout title="Sign in">
-  <AuthCard title="Sign in">
-    <SignInForm serverError={error} redirectTarget={redirectTarget} client:load />
-    <Fragment slot="footer">
-      <AuthFooterPrompt prompt="Don't have an account?" href={signUpHref} linkText="Sign up" />
-    </Fragment>
-  </AuthCard>
+  <div class="bg-cosmic flex min-h-dvh flex-col overflow-hidden p-4 sm:p-8">
+    <Topbar class="mb-2" />
+    <div class="flex flex-1 items-center justify-center">
+      <div class="mx-auto w-full max-w-4xl">
+        <AuthCard title="Sign in">
+          <SignInForm notice={notice} serverError={error} redirectTarget={redirectTarget} client:load />
+          <Fragment slot="footer">
+            <AuthFooterPrompt prompt="Don't have an account?" href={signUpHref} linkText="Sign up" />
+          </Fragment>
+        </AuthCard>
+      </div>
+    </div>
+  </div>
 </Layout>

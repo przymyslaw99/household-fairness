@@ -4,6 +4,10 @@ import { createClient } from "@/lib/supabase";
 
 // Add only real household routes here; F-01 defines contracts without reserving route names.
 const PROTECTED_ROUTES = ["/dashboard", "/setup/household", "/household/invite", "/api/household/completions"];
+const AUTH_ROUTES = ["/auth/signin", "/auth/signup", "/auth/confirm-email"];
+const HOME_ROUTE = "/";
+const DASHBOARD_ROUTE = "/dashboard";
+const SETUP_ROUTE = "/setup/household";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const supabase = createClient(context.request.headers, context.cookies);
@@ -17,23 +21,27 @@ export const onRequest = defineMiddleware(async (context, next) => {
     context.locals.user = null;
   }
 
+  if (context.locals.user && AUTH_ROUTES.includes(context.url.pathname)) {
+    return context.redirect(HOME_ROUTE);
+  }
+
   if (PROTECTED_ROUTES.some((route) => context.url.pathname.startsWith(route))) {
     if (!context.locals.user) {
       return context.redirect("/auth/signin");
     }
 
     if (
-      (context.url.pathname.startsWith("/setup/household") || context.url.pathname.startsWith("/household/invite")) &&
+      (context.url.pathname.startsWith(SETUP_ROUTE) || context.url.pathname.startsWith("/household/invite")) &&
       supabase
     ) {
       const membershipResult = await getCurrentUserHouseholdMembership(supabase);
 
-      if (context.url.pathname.startsWith("/setup/household") && !membershipResult.error && membershipResult.data) {
-        return context.redirect("/dashboard");
+      if (context.url.pathname.startsWith(SETUP_ROUTE) && !membershipResult.error && membershipResult.data) {
+        return context.redirect(DASHBOARD_ROUTE);
       }
 
       if (context.url.pathname.startsWith("/household/invite") && !membershipResult.error && !membershipResult.data) {
-        return context.redirect("/setup/household");
+        return context.redirect(SETUP_ROUTE);
       }
     }
   }

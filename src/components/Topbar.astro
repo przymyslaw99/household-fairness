@@ -1,35 +1,180 @@
 ---
+import { cn } from "@/lib/utils";
+import { getCurrentUserHouseholdMembership } from "@/lib/household/repository";
+import { HOUSEHOLD_ROLES } from "@/lib/household/types";
+import { createClient } from "@/lib/supabase";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
 const { user } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+const membershipResult = user && supabase ? await getCurrentUserHouseholdMembership(supabase) : null;
+const membership = membershipResult?.error ? null : (membershipResult?.data ?? null);
+const pathname = Astro.url.pathname;
+const signedInTooltip = user?.email ? `Signed in as: ${user.email}` : "Signed in";
+const signedOutTooltip = "Not signed in";
+
+const baseLinkClass =
+  "inline-flex items-center justify-center rounded-md border px-3 py-2 text-sm font-medium transition";
+const inactiveLinkClass = `${baseLinkClass} border-white/10 bg-white/5 text-blue-100 hover:bg-white/10 hover:text-white`;
+const activeLinkClass = `${baseLinkClass} border-cyan-300/30 bg-cyan-300/15 text-white`;
+
+function getLinkClass(href: string) {
+  return pathname === href ? activeLinkClass : inactiveLinkClass;
+}
 ---
 
 <div
-  class="mb-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80"
+  class:list={[
+    "mb-4 flex flex-col gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 sm:flex-row sm:items-center sm:justify-between",
+    cn(className),
+  ]}
 >
+  <div class="inline-flex items-center gap-3 self-start text-white">
+    <a
+      href="/"
+      class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-cyan-300/30 bg-cyan-300/15 text-cyan-100 transition hover:text-white"
+      aria-label="Go to main page"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M3 10.5 12 3l9 7.5"></path>
+        <path d="M5 9.5V21h14V9.5"></path>
+        <path d="M9 21v-6h6v6"></path>
+      </svg>
+    </a>
+    <span class="flex flex-col">
+      <span class="text-sm font-semibold tracking-[0.2em] text-cyan-100/80 uppercase">App</span>
+      <span class="text-base font-semibold text-white">Household Fairness</span>
+    </span>
+  </div>
   {
     user ? (
       <>
-        <span class="text-blue-100/70">{user.email}</span>
-        <div class="flex items-center gap-3">
-          <a href="/dashboard" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <a href="/dashboard" class:list={[getLinkClass("/dashboard")]}>
             Dashboard
           </a>
+          {membership === null ? (
+            <a href="/setup/household" class:list={[getLinkClass("/setup/household")]}>
+              Household setup
+            </a>
+          ) : null}
+          {membership?.role === HOUSEHOLD_ROLES.owner ? (
+            <a href="/household/invite" class:list={[getLinkClass("/household/invite")]}>
+              Invitation
+            </a>
+          ) : null}
           <form method="POST" action="/api/auth/signout">
-            <button type="submit" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+            <button type="submit" class:list={[inactiveLinkClass]}>
               Sign out
             </button>
           </form>
+          <span
+            class="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-emerald-300/40 bg-emerald-400/15 text-emerald-200"
+            title={signedInTooltip}
+            aria-label={signedInTooltip}
+          >
+            <span class="sr-only">{signedInTooltip}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 20a6 6 0 0 0-12 0" />
+              <circle cx="12" cy="8" r="4" />
+            </svg>
+            <span
+              class="absolute right-0 bottom-0 inline-flex h-4 w-4 items-center justify-center rounded-full border border-emerald-200/70 bg-emerald-500 text-white"
+              aria-hidden="true"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m5 12 5 5L20 7" />
+              </svg>
+            </span>
+          </span>
         </div>
       </>
     ) : (
       <>
-        <span class="text-blue-100/70">Not signed in</span>
-        <div class="flex gap-3">
-          <a href="/auth/signin" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+        <div class="flex flex-wrap items-center justify-end gap-2">
+          <a href="/auth/signin" class:list={[getLinkClass("/auth/signin")]}>
             Sign in
           </a>
-          <a href="/auth/signup" class="text-purple-300 transition-colors hover:text-purple-100 hover:underline">
+          <a href="/auth/signup" class:list={[getLinkClass("/auth/signup")]}>
             Sign up
           </a>
+          <span
+            class="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-rose-300/40 bg-rose-400/15 text-rose-200"
+            title={signedOutTooltip}
+            aria-label={signedOutTooltip}
+          >
+            <span class="sr-only">{signedOutTooltip}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M18 20a6 6 0 0 0-12 0" />
+              <circle cx="12" cy="8" r="4" />
+            </svg>
+            <span
+              class="absolute right-0 bottom-0 inline-flex h-4 w-4 items-center justify-center rounded-full border border-rose-200/70 bg-rose-500 text-white"
+              aria-hidden="true"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m7 7 10 10" />
+                <path d="m17 7-10 10" />
+              </svg>
+            </span>
+          </span>
         </div>
       </>
     )

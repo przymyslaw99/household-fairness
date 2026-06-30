@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import { Mail, Lock, LogIn } from "lucide-react";
+import { CheckCircle2, Mail, Lock, LogIn } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { PasswordToggle } from "@/components/auth/PasswordToggle";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
 
 interface Props {
+  notice?: string | null;
   serverError?: string | null;
   redirectTarget?: string | null;
 }
 
-export default function SignInForm({ serverError, redirectTarget }: Props) {
+export default function SignInForm({ notice, serverError, redirectTarget }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +42,14 @@ export default function SignInForm({ serverError, redirectTarget }: Props) {
   }
 
   return (
-    <form method="POST" action="/api/auth/signin" className="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form method="POST" action="/api/auth/signin" className="space-y-3" onSubmit={handleSubmit} noValidate>
       {redirectTarget ? <input type="hidden" name="redirectTo" value={redirectTarget} /> : null}
+      {notice ? (
+        <p className="flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-900/30 px-3 py-2 text-sm text-emerald-200">
+          <CheckCircle2 className="size-4 shrink-0" />
+          {notice}
+        </p>
+      ) : null}
       <FormField
         id="email"
         type="email"

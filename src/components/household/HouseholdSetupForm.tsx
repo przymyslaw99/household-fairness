@@ -97,7 +97,7 @@ export default function HouseholdSetupForm({ serverError }: Props) {
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm text-blue-100/80">Starting chores</p>
-            <p className="text-xs text-blue-100/50">Add at least one visible weighted chore for your household.</p>
+            <p className="text-xs text-blue-100/50">Add at least one chore.</p>
           </div>
           <Button
             type="button"

@@ -33,10 +33,10 @@ export default function InviteControls({ activeInviteUrl, notice, serverError }:
   return (
     <div className="space-y-5">
       <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col items-center gap-3 text-center">
           <div
             className={cn(
-              "inline-flex size-10 shrink-0 items-center justify-center self-center rounded-full border",
+              "inline-flex size-10 shrink-0 items-center justify-center rounded-full border",
               hasActiveInvite
                 ? "border-emerald-300/30 bg-emerald-300/10 text-emerald-100"
                 : "border-white/10 bg-white/5 text-blue-100",
@@ -45,21 +45,17 @@ export default function InviteControls({ activeInviteUrl, notice, serverError }:
             {hasActiveInvite ? <ShieldCheck className="size-5" /> : <Link2 className="size-5" />}
           </div>
 
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-white">
-              {hasActiveInvite ? "Active invite link ready" : "No active invite link yet"}
-            </p>
-            <p className="mt-1 text-sm text-blue-100/65">
-              {hasActiveInvite
-                ? "Share this link with one future household member. Reloading this page keeps the same active invite."
-                : "Create an invite only when you are ready for a second member to join this household."}
-            </p>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-white">{!hasActiveInvite && "No active invite link yet"}</p>
           </div>
         </div>
 
         {hasActiveInvite ? (
           <div className="mt-4 space-y-3">
-            <label className="block text-xs tracking-[0.24em] text-blue-100/45 uppercase" htmlFor="activeInviteUrl">
+            <label
+              className="block text-center text-xs tracking-[0.24em] text-blue-100/45 uppercase"
+              htmlFor="activeInviteUrl"
+            >
               Invite link
             </label>
             <div className="flex flex-col gap-3">

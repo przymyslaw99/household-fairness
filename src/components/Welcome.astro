@@ -1,8 +1,10 @@
 ---
 import Topbar from "@/components/Topbar.astro";
+
+const { user } = Astro.locals;
 ---
 
-<div class="bg-cosmic relative min-h-screen w-full overflow-hidden">
+<div class="bg-cosmic relative flex min-h-dvh w-full flex-col overflow-x-hidden">
   <!-- Cosmic orbs -->
   <div
     class="pointer-events-none absolute top-1/4 -left-24 h-[350px] w-[350px] rounded-full bg-purple-500/20 blur-[120px]"
@@ -24,102 +26,121 @@ import Topbar from "@/components/Topbar.astro";
   >
   </div>
 
-  <div class="relative z-10 p-4 sm:p-8">
-    <Topbar />
+  <div class="relative z-10 flex flex-1 flex-col p-4 sm:p-8">
+    <Topbar class="mb-2" />
 
-    <!-- Hero section -->
-    <div class="mx-auto flex max-w-4xl flex-col items-center justify-center px-4 py-24 text-center sm:py-32 lg:py-40">
-      <h1
-        class="mb-6 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 bg-clip-text text-5xl leading-tight font-bold text-transparent sm:text-6xl lg:text-7xl"
-      >
-        10x Astro Starter
-      </h1>
-      <p class="mb-10 max-w-2xl text-lg text-blue-100/70 sm:text-xl">
-        A production-ready starter with authentication, modern tooling, and a cosmic developer experience.
-      </p>
-      <div class="flex flex-col gap-4 sm:flex-row">
-        <a
-          href="/auth/signin"
-          class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-purple-500"
-        >
-          Sign In
-        </a>
-        <a
-          href="/auth/signup"
-          class="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-white/10"
-        >
-          Sign Up
-        </a>
-      </div>
-    </div>
+    <div class="flex flex-1 items-center justify-center py-4 sm:py-6">
+      <div class="mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 text-center lg:-translate-y-4">
+        <!-- Hero section -->
+        <div class="flex flex-col items-center">
+          <h1
+            class="mb-5 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 bg-clip-text text-5xl leading-tight font-bold text-transparent sm:text-6xl lg:text-7xl"
+          >
+            Household Fairness
+          </h1>
+          <p class="mb-8 max-w-2xl text-lg text-blue-100/70 sm:text-xl">
+            Track who does what, keep responsibilities clear, and see whether the workload stays balanced across the
+            household.
+          </p>
+          {
+            !user ? (
+              <div class="flex flex-col gap-4 sm:flex-row">
+                <a
+                  href="/auth/signin"
+                  class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-purple-500"
+                >
+                  Sign In
+                </a>
+                <a
+                  href="/auth/signup"
+                  class="inline-flex items-center justify-center rounded-lg border border-white/20 px-6 py-3 text-base font-medium text-white transition-colors hover:bg-white/10"
+                >
+                  Sign Up
+                </a>
+              </div>
+            ) : null
+          }
+        </div>
 
-    <!-- Feature cards -->
-    <div class="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-4 pb-24 sm:grid-cols-3">
-      <div class="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="mb-4 text-purple-300"
-        >
-          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-        <h3 class="mb-2 text-lg font-semibold text-white">Authentication Ready</h3>
-        <p class="text-sm leading-relaxed text-blue-100/60">
-          Built-in Supabase auth with sign in, sign up, and protected routes out of the box.
-        </p>
-      </div>
+        <!-- Feature cards -->
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-left backdrop-blur-xl">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="mb-4 text-purple-300"
+            >
+              <rect width="14" height="18" x="5" y="3" rx="2"></rect>
+              <path d="M9 3h6v4H9z"></path>
+              <path d="M9 12h6"></path>
+              <path d="M9 16h4"></path>
+            </svg>
+            <h3 class="mb-2 text-lg font-semibold text-white">Clear chore ownership</h3>
+            <p class="text-sm leading-relaxed text-blue-100/60">
+              Define household chores and expectations so everyone knows what needs to be done and who is responsible
+              for it.
+            </p>
+          </div>
 
-      <div class="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="mb-4 text-purple-300"
-        >
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
-        </svg>
-        <h3 class="mb-2 text-lg font-semibold text-white">Modern Stack</h3>
-        <p class="text-sm leading-relaxed text-blue-100/60">
-          Astro 5, React 19, Tailwind 4, and TypeScript — the latest tools, ready to go.
-        </p>
-      </div>
+          <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-left backdrop-blur-xl">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="mb-4 text-purple-300"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="10" cy="8" r="4"></circle>
+              <path d="M20 21v-2a3.5 3.5 0 0 0-2.5-3.35"></path>
+              <path d="M16.5 4.8a3.5 3.5 0 0 1 0 6.4"></path>
+            </svg>
+            <h3 class="mb-2 text-lg font-semibold text-white">Shared progress</h3>
+            <p class="text-sm leading-relaxed text-blue-100/60">
+              Let household members record completed chores and keep recent activity visible for everyone in the
+              household.
+            </p>
+          </div>
 
-      <div class="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="mb-4 text-purple-300"
-        >
-          <polyline points="16 18 22 12 16 6"></polyline>
-          <polyline points="8 6 2 12 8 18"></polyline>
-        </svg>
-        <h3 class="mb-2 text-lg font-semibold text-white">Developer Experience</h3>
-        <p class="text-sm leading-relaxed text-blue-100/60">
-          ESLint, Prettier, and pre-commit hooks keep your codebase clean from day one.
-        </p>
+          <div class="rounded-xl border border-white/10 bg-white/5 p-6 text-left backdrop-blur-xl">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="mb-4 text-purple-300"
+            >
+              <path d="M12 3v18"></path>
+              <path d="M5 7h14"></path>
+              <path d="M7 7 4 13h6L7 7z"></path>
+              <path d="m17 7-3 6h6l-3-6z"></path>
+              <path d="M4 17a3 3 0 0 0 6 0"></path>
+              <path d="M14 17a3 3 0 0 0 6 0"></path>
+            </svg>
+            <h3 class="mb-2 text-lg font-semibold text-white">Fairness at a glance</h3>
+            <p class="text-sm leading-relaxed text-blue-100/60">
+              Review the current fairness score and recent contribution history to see whether the workload stays
+              balanced.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

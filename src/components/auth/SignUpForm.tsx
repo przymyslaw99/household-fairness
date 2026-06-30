@@ -64,7 +64,7 @@ export default function SignUpForm({ serverError, redirectTarget }: Props) {
     ) : undefined;
 
   return (
-    <form method="POST" action="/api/auth/signup" className="space-y-4" onSubmit={handleSubmit} noValidate>
+    <form method="POST" action="/api/auth/signup" className="space-y-3" onSubmit={handleSubmit} noValidate>
       {redirectTarget ? <input type="hidden" name="redirectTo" value={redirectTarget} /> : null}
       <FormField
         id="email"

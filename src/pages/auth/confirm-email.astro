@@ -1,6 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import AuthMessageCard from "@/components/auth/AuthMessageCard.astro";
+import Topbar from "@/components/Topbar.astro";
 import { appendRedirectTarget, sanitizeLocalRedirectTarget } from "@/lib/auth/redirects";
 
 const isAutoConfirmed = import.meta.env.DEV;
@@ -23,13 +24,18 @@ const content = isAutoConfirmed
 ---
 
 <Layout title={content.heading}>
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <AuthMessageCard
-      emoji={content.emoji}
-      heading={content.heading}
-      description={content.description}
-      href={signInHref}
-      linkText={content.linkText}
-    />
+  <div class="bg-cosmic min-h-dvh overflow-x-hidden p-4 sm:p-8">
+    <Topbar class="mb-2" />
+    <div class="mx-auto max-w-4xl">
+      <div class="flex justify-center">
+        <AuthMessageCard
+          emoji={content.emoji}
+          heading={content.heading}
+          description={content.description}
+          href={signInHref}
+          linkText={content.linkText}
+        />
+      </div>
+    </div>
   </div>
 </Layout>
