@@ -106,6 +106,7 @@ export async function listActiveRecentCompletions(
   supabase: HouseholdSupabaseClient,
   householdId: Uuid,
   windowStart: Date,
+  windowEnd: Date,
 ): Promise<RepositoryResult<ActiveCompletionWithChore[]>> {
   const { data, error } = await supabase
     .from("chore_completions")
@@ -113,6 +114,7 @@ export async function listActiveRecentCompletions(
     .eq("household_id", householdId)
     .is("undone_at", null)
     .gte("completed_at", windowStart.toISOString())
+    .lte("completed_at", windowEnd.toISOString())
     .order("completed_at", { ascending: false });
 
   return toRepositoryResult(data ?? [], error);

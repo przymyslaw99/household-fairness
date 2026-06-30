@@ -23,13 +23,14 @@ function getDashboardNotice(value: string | null): string | null {
     return "Completion removed from active history.";
   }
 
-  return value;
+  return null;
 }
 
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 const error = Astro.url.searchParams.get("error");
 const notice = getDashboardNotice(Astro.url.searchParams.get("notice"));
-const windowStart = new Date(Date.now() - SCORE_WINDOW_MS);
+const now = new Date();
+const windowStart = new Date(now.getTime() - SCORE_WINDOW_MS);
 const windowLabel = `${SCORE_WINDOW_DAYS}-day window`;
 
 let pageError = error;
@@ -38,7 +39,7 @@ let chores: Chore[] = [];
 let completions: ActiveCompletionWithChore[] = [];
 let members: HouseholdMember[] = [];
 let score: DashboardScoreResult | null = null;
-const now = new Date();
+let scoreEvidenceUnavailable = false;
 
 if (!supabase) {
   guardStatus = "error";
@@ -52,7 +53,7 @@ if (!supabase) {
   } else if (guard.status === "allowed") {
     const [choresResult, completionsResult, membersResult] = await Promise.all([
       listHouseholdChores(supabase, guard.member.household_id),
-      listActiveRecentCompletions(supabase, guard.member.household_id, windowStart),
+      listActiveRecentCompletions(supabase, guard.member.household_id, windowStart, now),
       listHouseholdMembers(supabase, guard.member.household_id),
     ]);
 
@@ -79,6 +80,7 @@ if (!supabase) {
 
       if (scoreResult.error) {
         pageError = "We could not calculate the shared fairness score right now.";
+        scoreEvidenceUnavailable = true;
       } else {
         score = scoreResult.data;
       }
@@ -189,6 +191,20 @@ if (!supabase) {
           ) : (
             <div class="mt-6 grid gap-6">
               {score ? <FairnessSummary score={score} /> : null}
+              {scoreEvidenceUnavailable ? (
+                <section class="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                  <div class="flex items-start gap-3">
+                    <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-50" />
+                    <div>
+                      <h2 class="text-xl font-semibold text-amber-50">Shared score evidence is unavailable</h2>
+                      <p class="mt-2 text-sm leading-6 text-amber-50/75">
+                        Recent completion data is incomplete, so the dashboard is hiding the score and its history
+                        evidence until the data can be loaded consistently.
+                      </p>
+                    </div>
+                  </div>
+                </section>
+              ) : null}
 
               {chores.length === 0 ? (
                 <section class="rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
@@ -215,7 +231,7 @@ if (!supabase) {
                 <ChoreCompletionPanel chores={chores} />
               )}
 
-              <CompletionHistory completions={completions} currentUserId={user?.id ?? null} />
+              {score ? <CompletionHistory completions={completions} currentUserId={user?.id ?? null} /> : null}
             </div>
           )
         }

@@ -1,7 +1,7 @@
 ---
 change_id: shared-fairness-dashboard
 title: Shared fairness dashboard
-status: implemented
+status: impl_reviewed
 created: 2026-06-19
 updated: 2026-06-30
 archived_at: null

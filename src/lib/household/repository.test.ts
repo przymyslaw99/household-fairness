@@ -5,6 +5,7 @@ import {
   disableActiveInviteForCurrentOwner,
   getActiveInviteForHousehold,
   type HouseholdSupabaseClient,
+  listActiveRecentCompletions,
   listHouseholdMembers,
   undoCurrentUserChoreCompletion,
 } from "./repository";
@@ -27,6 +28,8 @@ const MEMBERSHIP: HouseholdMember = {
 };
 const COMPLETION_ID = "00000000-0000-4000-8000-000000000050";
 const CHORE_ID = "00000000-0000-4000-8000-000000000060";
+const WINDOW_START = new Date("2026-06-13T10:00:00.000Z");
+const WINDOW_END = new Date("2026-06-27T10:00:00.000Z");
 
 describe("getActiveInviteForHousehold", () => {
   it("returns the current active invite when one exists", async () => {
@@ -66,6 +69,29 @@ describe("listHouseholdMembers", () => {
     expect(eq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
     expect(order).toHaveBeenCalledWith("created_at", { ascending: true });
     expect(result).toEqual({ data: [ownerMembership, MEMBERSHIP], error: null });
+  });
+});
+
+describe("listActiveRecentCompletions", () => {
+  it("bounds active completion history to the exact score window", async () => {
+    const order = vi.fn().mockResolvedValue({ data: [], error: null });
+    const lte = vi.fn().mockReturnValue({ order });
+    const gte = vi.fn().mockReturnValue({ lte });
+    const is = vi.fn().mockReturnValue({ gte });
+    const eq = vi.fn().mockReturnValue({ is });
+    const select = vi.fn().mockReturnValue({ eq });
+    const from = vi.fn().mockReturnValue({ select });
+    const supabase = { from } as unknown as HouseholdSupabaseClient;
+
+    const result = await listActiveRecentCompletions(supabase, MEMBERSHIP.household_id, WINDOW_START, WINDOW_END);
+
+    expect(from).toHaveBeenCalledWith("chore_completions");
+    expect(eq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
+    expect(is).toHaveBeenCalledWith("undone_at", null);
+    expect(gte).toHaveBeenCalledWith("completed_at", WINDOW_START.toISOString());
+    expect(lte).toHaveBeenCalledWith("completed_at", WINDOW_END.toISOString());
+    expect(order).toHaveBeenCalledWith("completed_at", { ascending: false });
+    expect(result).toEqual({ data: [], error: null });
   });
 });
 
