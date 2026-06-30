@@ -152,7 +152,7 @@ Status: `implemented`
 | --- | --- | --- | --- | --- |
 | F-01 | `foundation-household-domain-contract` | `ready` | Creates the smallest shared domain contract needed before any vertical household flow can be planned safely. | `None` |
 | S-01 | `owner-household-setup` | `implemented` | Creates the first owner-visible setup path for the shared scoring model. | `F-01` |
-| S-02 | `invite-lifecycle-and-join` | `proposed` | Connects the owner setup flow to a real second household member and keeps invite access under owner control. | `F-01`, `S-01` |
+| S-02 | `invite-lifecycle-and-join` | `implemented` | Connects the owner setup flow to a real second household member and keeps invite access under owner control. | `F-01`, `S-01` |
 | S-03 | `member-completion-loop` | `implemented` | Creates the first trustworthy recorded contribution event that can feed the score. | `F-01`, `S-01`, `S-02` |
 | S-04 | `shared-fairness-dashboard` | `implemented` | Delivers the first live shared fairness view that proves the product's value. | `F-01`, `S-03` |
 
