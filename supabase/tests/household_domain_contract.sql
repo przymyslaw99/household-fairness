@@ -1,6 +1,6 @@
 begin;
 
-select plan(31);
+select plan(36);
 
 insert into auth.users (id, email, role, aud, email_confirmed_at, created_at, updated_at)
 values
@@ -218,6 +218,19 @@ select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000003
 
 select throws_ok(
   $$
+    update public.chores
+    set
+      name = 'Outsider edit attempt',
+      weight = 9
+    where id = current_setting('test.take_out_trash_chore_id')::uuid
+  $$,
+  '42501',
+  'new row violates row-level security policy for table "chores"',
+  'outsider cannot edit chores in another household'
+);
+
+select throws_ok(
+  $$
     insert into public.chore_completions (household_id, chore_id, completed_by)
     values (
       current_setting('test.phase_three_household_id')::uuid,
@@ -231,6 +244,19 @@ select throws_ok(
 );
 
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000002', true);
+
+select throws_ok(
+  $$
+    update public.chores
+    set
+      name = 'Member edit attempt',
+      weight = 4
+    where id = current_setting('test.take_out_trash_chore_id')::uuid
+  $$,
+  '42501',
+  'new row violates row-level security policy for table "chores"',
+  'member cannot edit chores'
+);
 
 select throws_ok(
   $$
@@ -256,6 +282,17 @@ select throws_ok(
   'member cannot create invites'
 );
 
+select throws_ok(
+  $$
+    update public.chores
+    set archived_at = now()
+    where id = current_setting('test.take_out_trash_chore_id')::uuid
+  $$,
+  '42501',
+  'new row violates row-level security policy for table "chores"',
+  'member cannot archive chores'
+);
+
 select lives_ok(
   $$
     insert into public.chore_completions (household_id, chore_id, completed_by)
@@ -279,6 +316,48 @@ select throws_ok(
 );
 
 select set_config('request.jwt.claim.sub', '00000000-0000-4000-8000-000000000001', true);
+
+select lives_ok(
+  $$
+    update public.chores
+    set
+      name = 'Kitchen reset',
+      weight = 4
+    where id = current_setting('test.take_out_trash_chore_id')::uuid
+  $$,
+  'owner can edit an active chore'
+);
+
+select lives_ok(
+  $$
+    update public.chores
+    set archived_at = now()
+    where id = current_setting('test.take_out_trash_chore_id')::uuid
+  $$,
+  'owner can archive an active chore'
+);
+
+select lives_ok(
+  $$
+    insert into public.chores (household_id, name, weight, created_by)
+    select id, 'Kitchen reset', 4, '00000000-0000-4000-8000-000000000001'
+    from public.households
+    where owner_id = '00000000-0000-4000-8000-000000000001'
+  $$,
+  'owner can reuse an archived chore name for a replacement chore'
+);
+
+select set_config(
+  'test.take_out_trash_chore_id',
+  (
+    select id::text
+    from public.chores
+    where household_id = current_setting('test.phase_three_household_id')::uuid
+      and name = 'Kitchen reset'
+      and archived_at is null
+  ),
+  true
+);
 
 select lives_ok(
   $$

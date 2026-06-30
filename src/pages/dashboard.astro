@@ -1,5 +1,5 @@
 ---
-import { AlertTriangle, CheckCircle2, CircleOff, Home, Link2, Lock } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CircleOff, Home, Lock } from "lucide-react";
 import AddChoreForm from "@/components/household/AddChoreForm";
 import CompletionHistory from "@/components/household/CompletionHistory.astro";
 import ChoreCompletionPanel from "@/components/household/ChoreCompletionPanel.astro";
@@ -26,6 +26,14 @@ function getDashboardNotice(value: string | null): string | null {
 
   if (value === "chore-added") {
     return "Chore added to your household.";
+  }
+
+  if (value === "chore-updated") {
+    return "Chore details updated.";
+  }
+
+  if (value === "chore-removed") {
+    return "Chore removed from future completions while existing history stays intact.";
   }
 
   return null;
@@ -99,6 +107,8 @@ const isOwner = membership?.role === HOUSEHOLD_ROLES.owner;
 const blockedStateMessage = isOwner
   ? "Add the first chore above to unlock the completion flow for your household."
   : "The household owner needs to add chores before members can record more contributions here.";
+const showDashboardIntro = guardStatus !== "missing_membership";
+const centerEmptyState = guardStatus === "missing_membership";
 ---
 
 <Layout title="Dashboard">
@@ -119,162 +129,155 @@ const blockedStateMessage = isOwner
     <div class="relative z-10 p-4 sm:p-8">
       <Topbar />
 
-      <main class="mx-auto max-w-6xl px-4 pb-20">
-        <section
-          class="rounded-[2rem] border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/25 backdrop-blur-xl sm:p-8"
-        >
-          <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div class="max-w-3xl">
-              <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Member dashboard</p>
-              <h1 class="mt-3 text-4xl font-semibold text-white sm:text-5xl">Record chores without losing context</h1>
-              <p class="mt-4 text-base leading-7 text-blue-100/68">
-                Welcome back{user?.email ? `, ${user.email}` : ""}.
-                <br />
-                This view shows the current shared fairness score, the active completion history for the {windowLabel},
-                and the chores your household can record right now.
-              </p>
-            </div>
+      <main
+        class:list={[
+          "mx-auto max-w-6xl px-4",
+          centerEmptyState ? "flex min-h-[calc(100vh-10rem)] items-center pb-8" : "pb-20",
+        ]}
+      >
+        <div class:list={centerEmptyState ? "w-full" : undefined}>
+          {
+            showDashboardIntro ? (
+              <section class="rounded-[2rem] border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/25 backdrop-blur-xl sm:p-8">
+                <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Member dashboard</p>
+                <h1 class="mt-3 text-4xl font-semibold text-white sm:text-5xl">Record chores without losing context</h1>
+                <p class="mt-4 text-base leading-7 text-blue-100/68">
+                  This view shows:
+                  <br />
+                  - current shared fairness score
+                  <br />
+                  - chores your household can record
+                  <br />- active completion history for the {windowLabel}
+                </p>
+              </section>
+            ) : null
+          }
 
-            <div class="rounded-2xl border border-white/10 bg-slate-950/30 px-5 py-4">
-              <p class="text-xs font-semibold tracking-[0.22em] text-blue-100/45 uppercase">Current scope</p>
-              <p class="mt-2 text-sm leading-6 text-blue-100/68">
-                Shared score visibility, self-completion, own undo, and active two-week history.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {
-          notice ? (
-            <div class="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
-              <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
-              <p>{notice}</p>
-            </div>
-          ) : null
-        }
-
-        {
-          pageError ? (
-            <div class="mt-6 flex items-start gap-3 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50">
-              <AlertTriangle className="mt-0.5 size-4 shrink-0" />
-              <p>{pageError}</p>
-            </div>
-          ) : null
-        }
-
-        {
-          guardStatus === "missing_membership" ? (
-            <section class="mt-6 rounded-[2rem] border border-white/10 bg-white/6 p-8 text-center shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
-              <div class="mx-auto flex size-14 items-center justify-center rounded-full border border-white/10 bg-white/6 text-blue-50">
-                <Home className="size-6" />
+          {
+            notice ? (
+              <div class="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-50">
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+                <p>{notice}</p>
               </div>
-              <h2 class="mt-5 text-2xl font-semibold text-white">Join or create a household first</h2>
-              <p class="mx-auto mt-3 max-w-2xl text-sm leading-7 text-blue-100/68">
-                Your account is signed in, but it is not attached to any household yet. The completion loop starts only
-                after the owner creates a household and you join it through the invite flow.
-              </p>
-              <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <a
-                  href="/setup/household"
-                  class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-medium text-slate-950 transition hover:bg-blue-100"
-                >
-                  Review household setup
-                </a>
-                <a
-                  href="/household/invite"
-                  class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
-                >
-                  <Link2 className="size-4" />
-                  Check invite status
-                </a>
-              </div>
-            </section>
-          ) : guardStatus !== "allowed" ? (
-            <section class="mt-6 rounded-[2rem] border border-white/10 bg-white/6 p-8 text-center shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
-              <div class="mx-auto flex size-14 items-center justify-center rounded-full border border-white/10 bg-white/6 text-blue-50">
-                <CircleOff className="size-6" />
-              </div>
-              <h2 class="mt-5 text-2xl font-semibold text-white">Dashboard unavailable right now</h2>
-              <p class="mx-auto mt-3 max-w-2xl text-sm leading-7 text-blue-100/68">
-                We could not confirm your household access for this request. Refresh the page or sign in again if the
-                problem continues.
-              </p>
-            </section>
-          ) : (
-            <div class="mt-6 grid gap-6">
-              {score ? <FairnessSummary score={score} /> : null}
-              {scoreEvidenceUnavailable ? (
-                <section class="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
-                  <div class="flex items-start gap-3">
-                    <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-50" />
-                    <div>
-                      <h2 class="text-xl font-semibold text-amber-50">Shared score evidence is unavailable</h2>
-                      <p class="mt-2 text-sm leading-6 text-amber-50/75">
-                        Recent completion data is incomplete, so the dashboard is hiding the score and its history
-                        evidence until the data can be loaded consistently.
-                      </p>
-                    </div>
-                  </div>
-                </section>
-              ) : null}
+            ) : null
+          }
 
-              <section class="rounded-[2rem] border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
-                <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-                  <div class="max-w-2xl">
-                    <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Household chores</p>
-                    <h2 class="mt-3 text-2xl font-semibold text-white">Add a new chore for future completions</h2>
-                    <p class="mt-3 text-sm leading-7 text-blue-100/68">
-                      New chores appear in the completion list immediately and use the same weight-based fairness
-                      scoring as the chores created during setup.
-                    </p>
-                  </div>
+          {
+            pageError ? (
+              <div class="mt-6 flex items-start gap-3 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50">
+                <AlertTriangle className="mt-0.5 size-4 shrink-0" />
+                <p>{pageError}</p>
+              </div>
+            ) : null
+          }
 
-                  {isOwner ? (
-                    <div class="w-full max-w-2xl">
-                      <AddChoreForm serverError={null} client:load />
-                    </div>
-                  ) : (
-                    <div class="w-full max-w-xl rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-4 text-sm text-amber-50">
-                      <div class="flex items-start gap-3">
-                        <Lock className="mt-0.5 size-4 shrink-0" />
-                        <p>Only the household owner is authorized to add new chores.</p>
-                      </div>
-                    </div>
-                  )}
+          {
+            guardStatus === "missing_membership" ? (
+              <section class="rounded-[2rem] border border-white/10 bg-white/6 p-8 text-center shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                <div class="mx-auto flex size-14 items-center justify-center rounded-full border border-white/10 bg-white/6 text-blue-50">
+                  <Home className="size-6" />
+                </div>
+                <h2 class="mt-5 text-2xl font-semibold text-white">Join or create a household first</h2>
+                <p class="mx-auto mt-3 max-w-2xl text-sm leading-7 text-blue-100/68">
+                  Your account is signed in, but it is not attached to any household yet.
+                </p>
+                <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <a
+                    href="/setup/household"
+                    class="inline-flex items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-medium text-slate-950 transition hover:bg-blue-100"
+                  >
+                    Create a Household
+                  </a>
                 </div>
               </section>
+            ) : guardStatus !== "allowed" ? (
+              <section class="mt-6 rounded-[2rem] border border-white/10 bg-white/6 p-8 text-center shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                <div class="mx-auto flex size-14 items-center justify-center rounded-full border border-white/10 bg-white/6 text-blue-50">
+                  <CircleOff className="size-6" />
+                </div>
+                <h2 class="mt-5 text-2xl font-semibold text-white">Dashboard unavailable right now</h2>
+                <p class="mx-auto mt-3 max-w-2xl text-sm leading-7 text-blue-100/68">
+                  We could not confirm your household access for this request. Refresh the page or sign in again if the
+                  problem continues.
+                </p>
+              </section>
+            ) : (
+              <div class="mt-6 grid gap-6">
+                {score ? <FairnessSummary score={score} /> : null}
+                {scoreEvidenceUnavailable ? (
+                  <section class="rounded-[2rem] border border-amber-300/20 bg-amber-300/10 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                    <div class="flex items-start gap-3">
+                      <AlertTriangle className="mt-0.5 size-5 shrink-0 text-amber-50" />
+                      <div>
+                        <h2 class="text-xl font-semibold text-amber-50">Shared score evidence is unavailable</h2>
+                        <p class="mt-2 text-sm leading-6 text-amber-50/75">
+                          Recent completion data is incomplete, so the dashboard is hiding the score and its history
+                          evidence until the data can be loaded consistently.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+                ) : null}
 
-              {chores.length === 0 ? (
-                <section class="rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
-                  <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                <section class="rounded-[2rem] border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                  <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                     <div class="max-w-2xl">
-                      <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Blocked state</p>
-                      <h2 class="mt-3 text-2xl font-semibold text-white">No chores are available yet</h2>
+                      <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Household chores</p>
+                      <h2 class="mt-3 text-2xl font-semibold text-white">Manage chores</h2>
                       <p class="mt-3 text-sm leading-7 text-blue-100/68">
-                        There is nothing new to complete because this household does not have any chore weights yet.
+                        Owners can add chores, edit names or weights, and remove chores.
                         <br />
-                        {blockedStateMessage}
+                        Removing a chore keeps its existing completion history visible.
                       </p>
                     </div>
 
-                    {isOwner ? null : (
-                      <a
-                        href="/household/invite"
-                        class="inline-flex items-center justify-center rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
-                      >
-                        Return to invite tools
-                      </a>
+                    {isOwner ? (
+                      <div class="w-full lg:w-1/2">
+                        <AddChoreForm chores={chores} serverError={null} client:load />
+                      </div>
+                    ) : (
+                      <div class="w-full rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-4 text-sm text-amber-50 lg:w-1/2">
+                        <div class="flex items-start gap-3">
+                          <Lock className="mt-0.5 size-4 shrink-0" />
+                          <p>Only the household owner is authorized to manage chores.</p>
+                        </div>
+                      </div>
                     )}
                   </div>
                 </section>
-              ) : (
-                <ChoreCompletionPanel chores={chores} />
-              )}
 
-              {score ? <CompletionHistory completions={completions} currentUserId={user?.id ?? null} /> : null}
-            </div>
-          )
-        }
+                {chores.length === 0 ? (
+                  <section class="rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                    <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                      <div class="max-w-2xl">
+                        <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Blocked state</p>
+                        <h2 class="mt-3 text-2xl font-semibold text-white">No chores are available yet</h2>
+                        <p class="mt-3 text-sm leading-7 text-blue-100/68">
+                          There is nothing new to complete because this household does not have any chore weights yet.
+                          <br />
+                          {blockedStateMessage}
+                        </p>
+                      </div>
+
+                      {isOwner ? null : (
+                        <a
+                          href="/household/invite"
+                          class="inline-flex items-center justify-center rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                        >
+                          Return to invite tools
+                        </a>
+                      )}
+                    </div>
+                  </section>
+                ) : (
+                  <ChoreCompletionPanel chores={chores} />
+                )}
+
+                {score ? <CompletionHistory completions={completions} currentUserId={user?.id ?? null} /> : null}
+              </div>
+            )
+          }
+        </div>
       </main>
     </div>
   </div>

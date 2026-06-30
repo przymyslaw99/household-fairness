@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  archiveHouseholdChore,
   createHouseholdChore,
   createCurrentUserChoreCompletion,
   createActiveInviteForCurrentOwner,
@@ -7,7 +8,9 @@ import {
   getActiveInviteForHousehold,
   type HouseholdSupabaseClient,
   listActiveRecentCompletions,
+  listHouseholdChores,
   listHouseholdMembers,
+  updateHouseholdChore,
   undoCurrentUserChoreCompletion,
 } from "./repository";
 import { HOUSEHOLD_ROLES, type HouseholdInvite, type HouseholdMember } from "./types";
@@ -73,6 +76,36 @@ describe("listHouseholdMembers", () => {
   });
 });
 
+describe("listHouseholdChores", () => {
+  it("returns only active chores for the requested household", async () => {
+    const chores = [
+      {
+        id: CHORE_ID,
+        household_id: MEMBERSHIP.household_id,
+        name: "Vacuum",
+        weight: 4,
+        created_by: MEMBERSHIP.user_id,
+        created_at: "2026-06-30T10:00:00.000Z",
+        archived_at: null,
+      },
+    ];
+    const order = vi.fn().mockResolvedValue({ data: chores, error: null });
+    const is = vi.fn().mockReturnValue({ order });
+    const eq = vi.fn().mockReturnValue({ is });
+    const select = vi.fn().mockReturnValue({ eq });
+    const from = vi.fn().mockReturnValue({ select });
+    const supabase = { from } as unknown as HouseholdSupabaseClient;
+
+    const result = await listHouseholdChores(supabase, MEMBERSHIP.household_id);
+
+    expect(from).toHaveBeenCalledWith("chores");
+    expect(eq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
+    expect(is).toHaveBeenCalledWith("archived_at", null);
+    expect(order).toHaveBeenCalledWith("created_at", { ascending: true });
+    expect(result).toEqual({ data: chores, error: null });
+  });
+});
+
 describe("createHouseholdChore", () => {
   it("inserts a new chore with the owner and household context supplied by the caller", async () => {
     const insertedChore = {
@@ -82,6 +115,7 @@ describe("createHouseholdChore", () => {
       weight: 4,
       created_by: MEMBERSHIP.user_id,
       created_at: "2026-06-30T10:00:00.000Z",
+      archived_at: null,
     };
     const single = vi.fn().mockResolvedValue({ data: insertedChore, error: null });
     const select = vi.fn().mockReturnValue({ single });
@@ -104,6 +138,76 @@ describe("createHouseholdChore", () => {
       weight: 4,
     });
     expect(result).toEqual({ data: insertedChore, error: null });
+  });
+});
+
+describe("updateHouseholdChore", () => {
+  it("updates an active chore inside the owner's household", async () => {
+    const updatedChore = {
+      id: CHORE_ID,
+      household_id: MEMBERSHIP.household_id,
+      name: "Kitchen reset",
+      weight: 5,
+      created_by: MEMBERSHIP.user_id,
+      created_at: "2026-06-30T10:00:00.000Z",
+      archived_at: null,
+    };
+    const maybeSingle = vi.fn().mockResolvedValue({ data: updatedChore, error: null });
+    const select = vi.fn().mockReturnValue({ maybeSingle });
+    const is = vi.fn().mockReturnValue({ select });
+    const idEq = vi.fn().mockReturnValue({ is });
+    const householdEq = vi.fn().mockReturnValue({ eq: idEq });
+    const update = vi.fn().mockReturnValue({ eq: householdEq });
+    const from = vi.fn().mockReturnValue({ update });
+    const supabase = { from } as unknown as HouseholdSupabaseClient;
+
+    const result = await updateHouseholdChore(supabase, {
+      householdId: MEMBERSHIP.household_id,
+      choreId: CHORE_ID,
+      name: updatedChore.name,
+      weight: updatedChore.weight,
+    });
+
+    expect(update).toHaveBeenCalledWith({
+      name: "Kitchen reset",
+      weight: 5,
+    });
+    expect(householdEq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
+    expect(idEq).toHaveBeenCalledWith("id", CHORE_ID);
+    expect(is).toHaveBeenCalledWith("archived_at", null);
+    expect(result).toEqual({ data: updatedChore, error: null });
+  });
+});
+
+describe("archiveHouseholdChore", () => {
+  it("archives an active chore instead of deleting history-bearing data", async () => {
+    const archivedChore = {
+      id: CHORE_ID,
+      household_id: MEMBERSHIP.household_id,
+      name: "Vacuum",
+      weight: 4,
+      created_by: MEMBERSHIP.user_id,
+      created_at: "2026-06-30T10:00:00.000Z",
+      archived_at: "2026-06-30T12:00:00.000Z",
+    };
+    const maybeSingle = vi.fn().mockResolvedValue({ data: archivedChore, error: null });
+    const select = vi.fn().mockReturnValue({ maybeSingle });
+    const is = vi.fn().mockReturnValue({ select });
+    const idEq = vi.fn().mockReturnValue({ is });
+    const householdEq = vi.fn().mockReturnValue({ eq: idEq });
+    const update = vi.fn().mockReturnValue({ eq: householdEq });
+    const from = vi.fn().mockReturnValue({ update });
+    const supabase = { from } as unknown as HouseholdSupabaseClient;
+
+    const result = await archiveHouseholdChore(supabase, {
+      householdId: MEMBERSHIP.household_id,
+      choreId: CHORE_ID,
+    });
+
+    expect(householdEq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
+    expect(idEq).toHaveBeenCalledWith("id", CHORE_ID);
+    expect(is).toHaveBeenCalledWith("archived_at", null);
+    expect(result).toEqual({ data: archivedChore, error: null });
   });
 });
 

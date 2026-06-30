@@ -35,6 +35,7 @@ export interface Chore extends DbRecord {
   weight: number;
   created_by: Uuid;
   created_at: IsoTimestamp;
+  archived_at: IsoTimestamp | null;
 }
 
 export interface ChoreCompletion extends DbRecord {
@@ -131,7 +132,9 @@ export interface HouseholdDatabase {
       >;
       chores: TableDefinition<
         Chore,
-        Pick<Chore, "household_id" | "name" | "weight" | "created_by"> & Partial<Pick<Chore, "id" | "created_at">>
+        Pick<Chore, "household_id" | "name" | "weight" | "created_by"> &
+          Partial<Pick<Chore, "id" | "created_at" | "archived_at">>,
+        Partial<Pick<Chore, "name" | "weight" | "archived_at">>
       >;
       chore_completions: TableDefinition<
         ChoreCompletion,

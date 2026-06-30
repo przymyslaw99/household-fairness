@@ -84,6 +84,7 @@ export async function listHouseholdChores(
     .from("chores")
     .select("*")
     .eq("household_id", householdId)
+    .is("archived_at", null)
     .order("created_at", { ascending: true });
 
   return toRepositoryResult(data ?? [], error);
@@ -105,6 +106,59 @@ export async function createHouseholdChore(
     .single();
 
   return toRequiredRepositoryResult(data, error);
+}
+
+export async function updateHouseholdChore(
+  supabase: HouseholdSupabaseClient,
+  input: { householdId: Uuid; choreId: Uuid; name: string; weight: number },
+): Promise<RepositoryResult<Chore>> {
+  const { data, error } = await supabase
+    .from("chores")
+    .update({
+      name: input.name,
+      weight: input.weight,
+    })
+    .eq("household_id", input.householdId)
+    .eq("id", input.choreId)
+    .is("archived_at", null)
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    return { data: null, error: { message: error.message } };
+  }
+
+  if (!data) {
+    return { data: null, error: { message: "Chore not found." } };
+  }
+
+  return { data, error: null };
+}
+
+export async function archiveHouseholdChore(
+  supabase: HouseholdSupabaseClient,
+  input: { householdId: Uuid; choreId: Uuid },
+): Promise<RepositoryResult<Chore>> {
+  const { data, error } = await supabase
+    .from("chores")
+    .update({
+      archived_at: new Date().toISOString(),
+    })
+    .eq("household_id", input.householdId)
+    .eq("id", input.choreId)
+    .is("archived_at", null)
+    .select("*")
+    .maybeSingle();
+
+  if (error) {
+    return { data: null, error: { message: error.message } };
+  }
+
+  if (!data) {
+    return { data: null, error: { message: "Chore not found." } };
+  }
+
+  return { data, error: null };
 }
 
 export async function listHouseholdMembers(

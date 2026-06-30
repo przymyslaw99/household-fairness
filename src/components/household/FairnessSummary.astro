@@ -28,7 +28,7 @@ function formatMemberIdentifier(member: DashboardScoreMember): string {
   <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div class="max-w-3xl">
       <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Shared fairness score</p>
-      <h2 class="mt-2 text-2xl font-semibold text-white">Current contribution view for the household</h2>
+      <h2 class="mt-2 text-2xl font-semibold text-white">Current contribution view</h2>
       <p class="mt-2 text-sm leading-6 text-blue-100/68">
         This score reflects recorded, active chore completions in the rolling {SCORE_WINDOW_DAYS}-day window.
         <br />
@@ -52,8 +52,9 @@ function formatMemberIdentifier(member: DashboardScoreMember): string {
       <p>
         Score window: {dateFormatter.format(new Date(score.window_start))} to{" "}
         {dateFormatter.format(new Date(score.window_end))}
+        <br />
+        Every household member stays visible even when they have zero active points in this window.
       </p>
-      <p>Every household member stays visible even when they have zero active points in this window.</p>
     </div>
   </div>
 
