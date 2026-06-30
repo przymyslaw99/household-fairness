@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
+  createHouseholdChore,
   createCurrentUserChoreCompletion,
   createActiveInviteForCurrentOwner,
   disableActiveInviteForCurrentOwner,
@@ -69,6 +70,40 @@ describe("listHouseholdMembers", () => {
     expect(eq).toHaveBeenCalledWith("household_id", MEMBERSHIP.household_id);
     expect(order).toHaveBeenCalledWith("created_at", { ascending: true });
     expect(result).toEqual({ data: [ownerMembership, MEMBERSHIP], error: null });
+  });
+});
+
+describe("createHouseholdChore", () => {
+  it("inserts a new chore with the owner and household context supplied by the caller", async () => {
+    const insertedChore = {
+      id: CHORE_ID,
+      household_id: MEMBERSHIP.household_id,
+      name: "Vacuum",
+      weight: 4,
+      created_by: MEMBERSHIP.user_id,
+      created_at: "2026-06-30T10:00:00.000Z",
+    };
+    const single = vi.fn().mockResolvedValue({ data: insertedChore, error: null });
+    const select = vi.fn().mockReturnValue({ single });
+    const insert = vi.fn().mockReturnValue({ select });
+    const from = vi.fn().mockReturnValue({ insert });
+    const supabase = { from } as unknown as HouseholdSupabaseClient;
+
+    const result = await createHouseholdChore(supabase, {
+      householdId: MEMBERSHIP.household_id,
+      createdBy: MEMBERSHIP.user_id,
+      name: insertedChore.name,
+      weight: insertedChore.weight,
+    });
+
+    expect(from).toHaveBeenCalledWith("chores");
+    expect(insert).toHaveBeenCalledWith({
+      household_id: MEMBERSHIP.household_id,
+      created_by: MEMBERSHIP.user_id,
+      name: "Vacuum",
+      weight: 4,
+    });
+    expect(result).toEqual({ data: insertedChore, error: null });
   });
 });
 

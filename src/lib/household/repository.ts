@@ -89,6 +89,24 @@ export async function listHouseholdChores(
   return toRepositoryResult(data ?? [], error);
 }
 
+export async function createHouseholdChore(
+  supabase: HouseholdSupabaseClient,
+  input: { householdId: Uuid; createdBy: Uuid; name: string; weight: number },
+): Promise<RepositoryResult<Chore>> {
+  const { data, error } = await supabase
+    .from("chores")
+    .insert({
+      household_id: input.householdId,
+      created_by: input.createdBy,
+      name: input.name,
+      weight: input.weight,
+    })
+    .select("*")
+    .single();
+
+  return toRequiredRepositoryResult(data, error);
+}
+
 export async function listHouseholdMembers(
   supabase: HouseholdSupabaseClient,
   householdId: Uuid,

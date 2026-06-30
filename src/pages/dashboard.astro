@@ -1,5 +1,6 @@
 ---
-import { AlertTriangle, CheckCircle2, CircleOff, Home, Link2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CircleOff, Home, Link2, Lock } from "lucide-react";
+import AddChoreForm from "@/components/household/AddChoreForm";
 import CompletionHistory from "@/components/household/CompletionHistory.astro";
 import ChoreCompletionPanel from "@/components/household/ChoreCompletionPanel.astro";
 import FairnessSummary from "@/components/household/FairnessSummary.astro";
@@ -8,7 +9,7 @@ import { requireCurrentHouseholdMember } from "@/lib/household/guards";
 import { listActiveRecentCompletions, listHouseholdChores, listHouseholdMembers } from "@/lib/household/repository";
 import { buildDashboardScore } from "@/lib/household/dashboard-score";
 import type { ActiveCompletionWithChore, Chore, DashboardScoreResult, HouseholdMember } from "@/lib/household/types";
-import { SCORE_WINDOW_DAYS, SCORE_WINDOW_MS } from "@/lib/household/types";
+import { HOUSEHOLD_ROLES, SCORE_WINDOW_DAYS, SCORE_WINDOW_MS } from "@/lib/household/types";
 import { createClient } from "@/lib/supabase";
 import Layout from "@/layouts/Layout.astro";
 
@@ -23,6 +24,10 @@ function getDashboardNotice(value: string | null): string | null {
     return "Completion removed from active history.";
   }
 
+  if (value === "chore-added") {
+    return "Chore added to your household.";
+  }
+
   return null;
 }
 
@@ -34,7 +39,8 @@ const windowStart = new Date(now.getTime() - SCORE_WINDOW_MS);
 const windowLabel = `${SCORE_WINDOW_DAYS}-day window`;
 
 let pageError = error;
-let guardStatus: "allowed" | "missing_membership" | "error" | "unauthenticated" = "unauthenticated";
+let guardStatus: "allowed" | "missing_membership" | "wrong_role" | "error" | "unauthenticated" = "unauthenticated";
+let membership: HouseholdMember | null = null;
 let chores: Chore[] = [];
 let completions: ActiveCompletionWithChore[] = [];
 let members: HouseholdMember[] = [];
@@ -51,6 +57,7 @@ if (!supabase) {
   if (guard.status === "error") {
     pageError ??= "We could not load your household access right now.";
   } else if (guard.status === "allowed") {
+    membership = guard.member;
     const [choresResult, completionsResult, membersResult] = await Promise.all([
       listHouseholdChores(supabase, guard.member.household_id),
       listActiveRecentCompletions(supabase, guard.member.household_id, windowStart, now),
@@ -87,6 +94,11 @@ if (!supabase) {
     }
   }
 }
+
+const isOwner = membership?.role === HOUSEHOLD_ROLES.owner;
+const blockedStateMessage = isOwner
+  ? "Add the first chore above to unlock the completion flow for your household."
+  : "The household owner needs to add chores before members can record more contributions here.";
 ---
 
 <Layout title="Dashboard">
@@ -206,6 +218,32 @@ if (!supabase) {
                 </section>
               ) : null}
 
+              <section class="rounded-[2rem] border border-white/10 bg-white/6 p-6 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
+                <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                  <div class="max-w-2xl">
+                    <p class="text-xs font-semibold tracking-[0.26em] text-blue-100/45 uppercase">Household chores</p>
+                    <h2 class="mt-3 text-2xl font-semibold text-white">Add a new chore for future completions</h2>
+                    <p class="mt-3 text-sm leading-7 text-blue-100/68">
+                      New chores appear in the completion list immediately and use the same weight-based fairness
+                      scoring as the chores created during setup.
+                    </p>
+                  </div>
+
+                  {isOwner ? (
+                    <div class="w-full max-w-2xl">
+                      <AddChoreForm serverError={null} client:load />
+                    </div>
+                  ) : (
+                    <div class="w-full max-w-xl rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-4 text-sm text-amber-50">
+                      <div class="flex items-start gap-3">
+                        <Lock className="mt-0.5 size-4 shrink-0" />
+                        <p>Only the household owner is authorized to add new chores.</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+
               {chores.length === 0 ? (
                 <section class="rounded-[2rem] border border-white/10 bg-white/6 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-xl">
                   <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -215,16 +253,18 @@ if (!supabase) {
                       <p class="mt-3 text-sm leading-7 text-blue-100/68">
                         There is nothing new to complete because this household does not have any chore weights yet.
                         <br />
-                        The household owner needs to add chores before members can record more contributions here.
+                        {blockedStateMessage}
                       </p>
                     </div>
 
-                    <a
-                      href="/household/invite"
-                      class="inline-flex items-center justify-center rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
-                    >
-                      Return to invite tools
-                    </a>
+                    {isOwner ? null : (
+                      <a
+                        href="/household/invite"
+                        class="inline-flex items-center justify-center rounded-xl border border-white/12 bg-white/6 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
+                      >
+                        Return to invite tools
+                      </a>
+                    )}
                   </div>
                 </section>
               ) : (
