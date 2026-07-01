@@ -12,21 +12,21 @@ const content = isAutoConfirmed
   ? {
       emoji: "✅",
       heading: "Registration successful",
-      description: "Your account has been created. You can now sign in.",
+      description: "Your account has been created.\nYou can now sign in.",
       linkText: "Go to sign in",
     }
   : {
       emoji: "📧",
       heading: "Check your email",
-      description: "We've sent a confirmation link to your email address. Click it to activate your account.",
+      description: "We've sent a confirmation link.\nClick it to activate your account.",
       linkText: "Back to sign in",
     };
 ---
 
 <Layout title={content.heading}>
-  <div class="bg-cosmic min-h-dvh overflow-x-hidden p-4 sm:p-8">
+  <div class="bg-cosmic flex min-h-dvh flex-col overflow-x-hidden p-4 sm:p-8">
     <Topbar class="mb-2" />
-    <div class="mx-auto max-w-4xl">
+    <div class="mx-auto flex w-full max-w-4xl flex-1 items-center justify-center">
       <div class="flex justify-center">
         <AuthMessageCard
           emoji={content.emoji}
