@@ -1,5 +1,5 @@
 ---
-project: "A smieci wyniosles?"
+project: "Household Fairness"
 context_type: greenfield
 product_type: web-app
 target_scale:

@@ -1,5 +1,5 @@
 ---
-project: "A smieci wyniosles?"
+project: "Household Fairness"
 version: 1
 status: proposed
 created: 2026-06-15
